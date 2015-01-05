@@ -11,12 +11,22 @@ A simple arcade game with no advertisement or in app purchases.
 
 ### Preliminary sketch
 ...
+##### Menuscreen
+##### GameScene
+##### OptionsScene
 
 ### Decomposing the problem
 The application can be decomposed into three main parts:
+* ResourceManager (handling loading/unloading of the resources like images, sounds, fonts etc).
+* SceneManager (handling switching of scenes).
+* Scenes (MenuScene, OptionsScene, GameScene).
+
+The GameScene can also be decomposed into three main parts:
 * PhysicsWorld
 * Player
 * GameObjects
+
+The player and the different gameobjects will be loaded into the physicsworld where the physics of this world will be applied (like gravity). 
 
 ### APIs
 AndEngine GLES 2 branch and the AndEnginePhysicsBox2DExtension.
