@@ -4,10 +4,7 @@ ProgrammingProject
 ###### Ferron Saan
 ###### 10386831
 
-> An arcade game created with [AndEngine](https://github.com/nicolasgramlich/AndEngine) GLES 2 branch.
-
-### Features
-A simple arcade game with no advertisement or in app purchases.
+> A simple arcade jumper game created with [AndEngine](https://github.com/nicolasgramlich/AndEngine).
 
 ### Preliminary sketch
 ##### MenuScene
