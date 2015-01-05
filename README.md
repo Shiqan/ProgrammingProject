@@ -10,10 +10,14 @@ ProgrammingProject
 A simple arcade game with no advertisement or in app purchases.
 
 ### Preliminary sketch
-...
-##### Menuscreen
+##### MenuScene
+![MenuScene](https://raw.githubusercontent.com/Shiqan/ProgrammingProject/master/MenuScene.PNG)
+
 ##### GameScene
+![GameScene](https://raw.githubusercontent.com/Shiqan/ProgrammingProject/master/GameScene.PNG)
+
 ##### OptionsScene
+![OptionsScene](https://raw.githubusercontent.com/Shiqan/ProgrammingProject/master/OptionsScene.PNG)
 
 ### Decomposing the problem
 The application can be decomposed into three main parts:
