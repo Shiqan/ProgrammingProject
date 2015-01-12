@@ -126,6 +126,7 @@ public class ApplyingSceneManager extends BaseGameActivity {
 		mEngine.registerUpdateHandler(new FPSLogger());
 		// Tell the SceneManager to show the MainMenu.
 		SceneManager.getInstance().showMainMenu();
+		
 		// Set the MainMenu to the Engine's scene.
 		pOnCreateSceneCallback.onCreateSceneFinished(MenuScene.getInstance());
 	}
@@ -138,5 +139,21 @@ public class ApplyingSceneManager extends BaseGameActivity {
 			OnPopulateSceneCallback pOnPopulateSceneCallback) {
 		// Our SceneManager will handle the population of the scenes, so we do nothing here.
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
+	}
+	
+	@Override
+	public void onResumeGame() {
+		if (ResourceManager.gameMusic != null && !ResourceManager.gameMusic.isPlaying()) {
+			ResourceManager.gameMusic.play();
+		}		
+		super.onResumeGame();
+	}
+	
+	@Override
+	public void onPauseGame() {
+		if (ResourceManager.gameMusic != null && ResourceManager.gameMusic.isPlaying()) {
+			ResourceManager.gameMusic.pause();
+		}
+		super.onResumeGame();
 	}
 }

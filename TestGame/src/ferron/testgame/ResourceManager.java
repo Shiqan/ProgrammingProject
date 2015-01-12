@@ -2,6 +2,8 @@ package ferron.testgame;
 
 import java.io.IOException;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
@@ -59,8 +61,15 @@ public class ResourceManager extends Object {
 	public static ITiledTextureRegion complete_stars_region;
 	public static ITiledTextureRegion play_pause_region;
 	
+	public static Music gameMusic;
+	
 	// ======================== Menu Resources ================= //
 	public static ITextureRegion menuBackgroundTextureRegion;
+	public static ITextureRegion slider_region;
+	public static ITextureRegion thumb_region;
+	
+	// ======================== Options Resources ================= //
+	public static ITextureRegion optionsBackgroundTextureRegion;
 	
 	// =================== Shared Game and Menu Resources ====== //
 	public static ITiledTextureRegion buttonTiledTextureRegion;
@@ -102,6 +111,7 @@ public class ResourceManager extends Object {
 	// Loads all game resources.
 	public static void loadGameResources() {
 		getInstance().loadGameTextures();
+		getInstance().loadGameSounds();
 		getInstance().loadSharedResources();
 	}
 	
@@ -114,6 +124,7 @@ public class ResourceManager extends Object {
 	// Unloads all game resources.
 	public static void unloadGameResources() {
 		getInstance().unloadGameTextures();
+		getInstance().unloadGameSounds();
 	}
 
 	// Unloads all menu resources
@@ -280,16 +291,16 @@ public class ResourceManager extends Object {
 			}
 		}
 	}
-	
+		
 	// ============================ LOAD TEXTURES (SHARED) ================= //
-	private void loadSharedTextures(){
+	private void loadSharedTextures() {
 		// Store the current asset base path to apply it after we've loaded our textures
 		mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
 		// Set our shared assets folder to "assets/gfx/"
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
-		// button texture:
-		if(buttonTiledTextureRegion==null) {
+		// button texture
+		if (buttonTiledTextureRegion==null) {
 			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 522, 74);
 			buttonTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "button01.png", 2, 1);
 			try {
@@ -300,8 +311,8 @@ public class ResourceManager extends Object {
 			}
 		}
 
-		// cloud texture:
-		if(cloudTextureRegion==null) {
+		// cloud texture
+		if (cloudTextureRegion==null) {
 			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 266, 138);
 			cloudTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "cloud.png");
 			try {
@@ -312,20 +323,20 @@ public class ResourceManager extends Object {
 			}
 		}
 
-		// Revert the Asset Path.
+		// Revert the Asset Path
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
 	}
 	// ============================ UNLOAD TEXTURES (SHARED) ============= //
-	private void unloadSharedTextures(){
-		// button texture:
-		if(buttonTiledTextureRegion!=null) {
+	private void unloadSharedTextures() {
+		// button texture
+		if (buttonTiledTextureRegion!=null) {
 			if(buttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
 				buttonTiledTextureRegion.getTexture().unload();
 				buttonTiledTextureRegion = null;
 			}
 		}
-		// cloud texture:
-		if(cloudTextureRegion!=null) {
+		// cloud texture
+		if (cloudTextureRegion!=null) {
 			if(cloudTextureRegion.getTexture().isLoadedToHardware()) {
 				cloudTextureRegion.getTexture().unload();
 				cloudTextureRegion = null;
@@ -345,6 +356,18 @@ public class ResourceManager extends Object {
 			}
 		}
 	}
+	
+	private void loadGameSounds(){
+		MusicFactory.setAssetBasePath("sfx/game/");
+		if(gameMusic==null) {
+			try {
+				// Create the clickSound object via the SoundFactory class
+				gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "vanguard2.mp3");
+			} catch (final IOException e) {
+				Log.e("Music Load","Exception:" + e.getMessage());
+			}
+		}
+	}
 	// =========================== UNLOAD SOUNDS ====================== //
 	private void unloadSounds(){
 		if(clickSound!=null)
@@ -354,6 +377,14 @@ public class ResourceManager extends Object {
 				engine.getSoundManager().remove(clickSound);
 				clickSound = null;
 			}
+	}
+	
+	private void unloadGameSounds(){
+		if(gameMusic!=null)
+			// Unload the clickSound object. Make sure to stop it first.
+			gameMusic.stop();
+			engine.getMusicManager().remove(gameMusic);
+			gameMusic = null;
 	}
 
 	// ============================ LOAD FONTS ========================== //

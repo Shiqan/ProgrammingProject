@@ -14,7 +14,6 @@ public class StatsScene extends ManagedScene {
 	public StatsScene() {
 		this.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
 		this.setTouchAreaBindingOnActionDownEnabled(true);
-		this.setTouchAreaBindingOnActionMoveEnabled(true);
 	}
 	
 	// No loading screen means no reason to use the following methods.

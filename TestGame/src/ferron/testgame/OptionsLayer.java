@@ -42,13 +42,15 @@ public class OptionsLayer extends HUD {
 				SceneManager.getInstance().hideLayer();
 			}
 		}
-		@Override public void reset() {}
+		@Override public void reset() {
+			
+		}
 	};
 	
 	public void onLoadLayer() {
 		String pScoreString = "Reached " + Math.round((GameScene.mPlayer.getX()/GameScene.mGameWidth)*100) + "%";
 		
-		// Create a background
+		// Create a transparent background
 		final float BackgroundX = 0f;
 		final float BackgroundY = 0f;
 		final float BackgroundWidth = 760f;
@@ -60,25 +62,44 @@ public class OptionsLayer extends HUD {
 		
 		// Create the title text for the Layer
 		Text pLayerTitle = new Text(0,0,ResourceManager.fontDefault32Bold,"GAME OVER!",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-		pLayerTitle.setPosition(0f,BackgroundHeight/2f-pLayerTitle.getHeight());
+		pLayerTitle.setPosition(0f,(BackgroundHeight/2f)-pLayerTitle.getHeight());
 		this.attachChild(pLayerTitle);
 		
 		// Create the score text for the Layer
 		Text pScoreText = new Text(0,0,ResourceManager.fontDefault32Bold, pScoreString ,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-		pScoreText.setPosition(0f,BackgroundHeight/3f-pScoreText.getHeight());
+		pScoreText.setPosition(0f-pScoreText.getWidth(),(BackgroundHeight/3f)-pScoreText.getHeight());
 		this.attachChild(pScoreText);
 		
-		// Create a restart button 
-		ButtonSprite pRestartButton = new ButtonSprite(
-				(ResourceManager.getInstance().cameraWidth-ResourceManager.buttonTiledTextureRegion.getTextureRegion(0).getWidth())/2f,
-				(ResourceManager.getInstance().cameraHeight-ResourceManager.buttonTiledTextureRegion.getTextureRegion(0).getHeight())*(1f/3f), 
+		// Create a menu button
+		ButtonSprite pMainMenuButton = new ButtonSprite(
+				0f+pScoreText.getWidth(),
+				(BackgroundHeight/3f)-pScoreText.getHeight(), 
 				ResourceManager.buttonTiledTextureRegion.getTextureRegion(0), 
 				ResourceManager.buttonTiledTextureRegion.getTextureRegion(1), 
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-		Text pRestartButtonText = new Text(0, 0, ResourceManager.fontDefault32Bold, "RESTART", ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-		pRestartButtonText.setPosition((pRestartButton.getWidth())/2, (pRestartButton.getHeight())/2);
-		pRestartButton.attachChild(pRestartButtonText);
-		this.attachChild(pRestartButton);
+		pMainMenuButton.setScale(1/ResourceManager.getInstance().cameraScaleFactorX, 1/ResourceManager.getInstance().cameraScaleFactorY);
+		pMainMenuButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(ButtonSprite pButtonSprite,
+					float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				// Play the click sound and show the Main Menu.
+				ResourceManager.clickSound.play();
+				onUnloadLayer();
+				SceneManager.getInstance().showMainMenu();
+			}});
+		Text pMainMenuButtonText = new Text(pMainMenuButton.getWidth()/2,pMainMenuButton.getHeight()/2,ResourceManager.fontDefault32Bold,"MENU",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		pMainMenuButton.attachChild(pMainMenuButtonText);
+		this.attachChild(pMainMenuButton);
+		this.registerTouchArea(pMainMenuButton);
+		
+		// Create a restart button 
+		ButtonSprite pRestartButton = new ButtonSprite(
+				0f+pScoreText.getWidth(),
+				pMainMenuButton.getHeight()-pScoreText.getHeight(),
+				ResourceManager.buttonTiledTextureRegion.getTextureRegion(0), 
+				ResourceManager.buttonTiledTextureRegion.getTextureRegion(1), 
+				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		pRestartButton.setScale(1/ResourceManager.getInstance().cameraScaleFactorX, 1/ResourceManager.getInstance().cameraScaleFactorY);
 		pRestartButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(ButtonSprite pButtonSprite,
@@ -87,7 +108,12 @@ public class OptionsLayer extends HUD {
 				onUnloadLayer();
 				ResourceManager.clickSound.play();
 			}});
+		Text pRestartButtonText = new Text(pRestartButton.getWidth()/2, pRestartButton.getHeight()/2, ResourceManager.fontDefault32Bold, "RESTART", ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		pRestartButton.attachChild(pRestartButtonText);
+		this.attachChild(pRestartButton);
 		this.registerTouchArea(pRestartButton);
+		
+		
 		
 		this.setPosition(ResourceManager.getInstance().cameraWidth/2f, ResourceManager.getInstance().cameraHeight/2f+480f);
 	}

@@ -7,7 +7,9 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.modifier.ScaleModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.particle.BatchedSpriteParticleSystem;
 import org.andengine.entity.particle.emitter.CircleParticleEmitter;
 import org.andengine.entity.particle.initializer.AccelerationParticleInitializer;
@@ -31,6 +33,8 @@ import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
+import org.andengine.util.modifier.ease.EaseBounceOut;
+import org.andengine.util.modifier.ease.EaseExponentialOut;
 import org.xml.sax.Attributes;
 
 import android.util.Log;
@@ -46,10 +50,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 public class GameScene extends ManagedScene implements IOnSceneTouchListener {
-	// Create an easy to manage HUD that we can attach/detach when the game scene is shown or hidden.
-	public HUD mGameHud = new HUD();
 	public GameScene mGameScene = this;
 	
+	// Create an easy to manage HUD that we can attach/detach when the game scene is shown or hidden.
+	public HUD mGameHud = new HUD();
+		
 	// Loading scene objects
 	private Text mLoadingText;
 	private Scene mLoadingScene;
@@ -137,6 +142,7 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 		            if (!mFirstTouch) {
 		            	mPlayer.setRunning();
 		            	mFirstTouch = true;
+		            	ResourceManager.gameMusic.play();
 					}
 					else {
 						mPlayer.jump();
@@ -185,6 +191,7 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Options Layer.
 				ResourceManager.clickSound.play();
+				ResourceManager.gameMusic.pause();
 				SceneManager.getInstance().showOptionsLayer(true);
 		}});		
 		Text OptionsButtonText = new Text(0,0,ResourceManager.fontDefault32Bold,"OPTIONS",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
@@ -209,19 +216,21 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 				
 				if (!mGameScene.isIgnoreUpdate()) {
 					mGameScene.setIgnoreUpdate(true);
+					ResourceManager.gameMusic.pause();
 					playPauseButton.setCurrentTileIndex(0);
 				} else {
 					mGameScene.setIgnoreUpdate(false);
+					ResourceManager.gameMusic.play();
 					playPauseButton.setCurrentTileIndex(1);	
 				}
 		}});
 		mGameHud.attachChild(playPauseButton);
 		mGameHud.registerTouchArea(playPauseButton);
 	}
-	
+
 	private void createPhysics()
 	{
-		mPhysicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -17), false);	
+		mPhysicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -34), false);	
 		mPhysicsWorld.setContactListener(contactListener());
 		registerUpdateHandler(mPhysicsWorld);
 	}
@@ -288,7 +297,7 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 						public void onDie()	{
 							if (!mDied) {
 								ApplyingSceneManager.mCamera.setChaseEntity(null);
-															
+								ResourceManager.gameMusic.pause();							
 								explode((int) mPlayer.getX(), (int) mPlayer.getY());
 														
 								mPlayer.setVisible(false);
@@ -422,18 +431,17 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 		CircleParticleEmitter particleEmitter = new CircleParticleEmitter(particleSpawnCenterX, particleSpawnCenterY, particleSpawnRadius);
 		
 		// Define particle system properties
-		float minSpawnRate = 50;
-		float maxSpawnRate = 100;
-		int maxParticleCount = 150;
+		float minSpawnRate = 75;
+		float maxSpawnRate = 75;
+		int maxParticleCount = 75;
 		
 		// Create Particle system
 		BatchedSpriteParticleSystem particleSystem = new BatchedSpriteParticleSystem(particleEmitter, minSpawnRate, maxSpawnRate, maxParticleCount, ResourceManager.getInstance().player_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 		
 		// Add particle modifiers
-		particleSystem.addParticleInitializer(new AccelerationParticleInitializer<UncoloredSprite>(-50f,50f,-100f,100f));
-		//particleSystem.addParticleInitializer(new ExpireParticleInitializer<UncoloredSprite>(4));
+		particleSystem.addParticleInitializer(new AccelerationParticleInitializer<UncoloredSprite>(-500f, 500f, -500f, 500f));
 		particleSystem.addParticleInitializer(new ColorParticleInitializer<UncoloredSprite>(0f,1f,0f,1f,0f,1f));
-		particleSystem.addParticleModifier(new ScaleParticleModifier<UncoloredSprite>(0f,3f,0.2f,1f));
+		particleSystem.addParticleModifier(new ScaleParticleModifier<UncoloredSprite>(0f,1.5f,0.2f,1f));
 		
 		attachChild(particleSystem);
 	}
@@ -468,6 +476,5 @@ public class GameScene extends ManagedScene implements IOnSceneTouchListener {
 		mGameScene.clearEntityModifiers();
 		mGameScene.clearTouchAreas();
 		mGameScene.clearUpdateHandlers();
-
 	}
 }

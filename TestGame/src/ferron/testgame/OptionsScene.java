@@ -29,7 +29,7 @@ public class OptionsScene extends ManagedScene {
 	@Override
 	public void onLoadScene() {
 		// Load the menu resources
-		ResourceManager.loadMenuResources();
+		//ResourceManager.loadOptionsResources();
 
 		// Create the background
 		Sprite pBackground = new Sprite(ResourceManager.getInstance().cameraWidth/2f,ResourceManager.getInstance().cameraHeight/2f,ResourceManager.menuBackgroundTextureRegion,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
@@ -37,14 +37,14 @@ public class OptionsScene extends ManagedScene {
 		pBackground.setScaleY(ResourceManager.getInstance().cameraHeight/480f);
 		pBackground.setZIndex(-5000);
 		this.attachChild(pBackground);
-		
+			
 		// Create a title
 		Text pTitleText = new Text(0, 0, ResourceManager.fontDefault72Bold, "OPTIONS", ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 		pTitleText.setPosition((ResourceManager.getInstance().cameraWidth)/2, (ResourceManager.getInstance().cameraHeight*2)/3f);
 		pTitleText.setColor(0.153f, 0.290f, 0.455f);
 		this.attachChild(pTitleText);
 		
-	}
+	}	
 	
 	@Override
 	public void onShowScene() {

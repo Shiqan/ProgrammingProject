@@ -7,6 +7,8 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -40,9 +42,13 @@ public abstract class Player extends AnimatedSprite {
 					onDie();
 				}
 				
-				if (mRun) {	
-					mBody.setLinearVelocity(new Vector2(5, mBody.getLinearVelocity().y)); 
+				if (GameActivity.mContinuousTouch) {
+					jump();
 				}
+				
+				if (mRun) {	
+					mBody.setLinearVelocity(new Vector2(8, mBody.getLinearVelocity().y)); 
+				} 
 	        }
 		});
 	}
@@ -51,14 +57,6 @@ public abstract class Player extends AnimatedSprite {
 		mRun = true;
 		
 		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100 };
-		
-		/* 
-		 * light = 0 - 5
-		 * dark  = 6 - 11
-		 * pink  = 48 - 53
-		 * blue  = 54 - 59
-		 */
-		
 		animate(PLAYER_ANIMATE, 0, 5, true);
 	}
 	
@@ -66,7 +64,8 @@ public abstract class Player extends AnimatedSprite {
 		if (!mFloorContact) {
 			return; 
 		}
-		mBody.setLinearVelocity(new Vector2(mBody.getLinearVelocity().x, 12)); 
+
+		mBody.setLinearVelocity(new Vector2(-8, 11));
 	}
 	
 	public void setfloorContact() {

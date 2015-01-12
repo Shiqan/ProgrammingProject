@@ -15,9 +15,7 @@ public class MenuScene extends ManagedScene {
 	}
 	
 	public MenuScene() {
-		this.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
 		this.setTouchAreaBindingOnActionDownEnabled(true);
-		this.setTouchAreaBindingOnActionMoveEnabled(true);
 	}
 	
 	// No loading screen means no reason to use the following methods.
@@ -43,7 +41,7 @@ public class MenuScene extends ManagedScene {
 		
 		// Create clouds that move from one side of the screen to the other, and repeat
 		Sprite[] CloudSprites = new Sprite[20];
-		for(Sprite curCloudSprite: CloudSprites){
+		for (Sprite curCloudSprite: CloudSprites) {
 			curCloudSprite = new Sprite(
 					MathUtils.random(-(this.getWidth()*this.getScaleX())/2,ResourceManager.getInstance().cameraWidth+(this.getWidth()*this.getScaleX())/2),
 					MathUtils.random(-(this.getHeight()*this.getScaleY())/2,ResourceManager.getInstance().cameraHeight + (this.getHeight()*this.getScaleY())/2),
@@ -54,13 +52,13 @@ public class MenuScene extends ManagedScene {
 				@Override
 				protected void onManagedUpdate(final float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
-					if(!initialized) {
+					if (!initialized) {
 						initialized = true;
 						this.setScale(XSpeed/2);
 						this.setZIndex(-4000+Math.round(XSpeed*1000f));
 						MenuScene.getInstance().sortChildren();
 					}
-					if(this.getX()<-(this.getWidth()*this.getScaleX())/2) {
+					if (this.getX()<-(this.getWidth()*this.getScaleX())/2) {
 						XSpeed = MathUtils.random(0.2f, 2f);
 						this.setScale(XSpeed/2);
 						this.setPosition(ResourceManager.getInstance().cameraWidth+(this.getWidth()*this.getScaleX())/2, MathUtils.random(-(this.getHeight()*this.getScaleY())/2,ResourceManager.getInstance().cameraHeight + (this.getHeight()*this.getScaleY())/2));
