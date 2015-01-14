@@ -52,7 +52,7 @@ public class ResourceManager extends Object {
 	public static ITextureRegion floor1_region;
 	public static ITextureRegion floor2_region;
 	public ITiledTextureRegion player_region;
-	public static ITextureRegion complete_stars_region;
+	public static ITextureRegion complete_region;
 	
 	public static ITiledTextureRegion menubuttonTiledTextureRegion;
 	public static ITiledTextureRegion pausebuttonTiledTextureRegion;
@@ -107,15 +107,16 @@ public class ResourceManager extends Object {
 		getInstance().unloadSharedResources();
 	}
 	
+	// Load all shared resources
 	private void loadSharedResources(){
-		loadSharedTextures();
+		loadButtonTextures();
 		loadSounds();
 		loadFonts();
 	}
 	
 	// Unloads all shared resources
 	private void unloadSharedResources() {
-		getInstance().unloadSharedTextures();
+		getInstance().unloadButtonTextures();
 		getInstance().unloadSounds();
 		getInstance().unloadFonts();
 	}
@@ -157,7 +158,7 @@ public class ResourceManager extends Object {
 			floor1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "floor1.png");
 			floor2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "floor2.png");
 	        player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, context, "test.png", 12, 8);
-	        complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "test.png");
+	        complete_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "square.png");
 	        
 	    	try {
 	    		gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -172,45 +173,46 @@ public class ResourceManager extends Object {
 	}
 	// ============================ UNLOAD TEXTURES (GAME) =============== //
 	private void unloadGameTextures(){
-		// background texture - only unload it if it is loaded:
 		if(gameBackgroundTextureRegion!=null) {
 			if(gameBackgroundTextureRegion.getTexture().isLoadedToHardware()) {
 				gameBackgroundTextureRegion.getTexture().unload();
 				gameBackgroundTextureRegion = null;
 			}
 		}
-		
-		// test texture:
 		if(box_region!=null) {
 			if(box_region.getTexture().isLoadedToHardware()) {
 				box_region.getTexture().unload();
 				box_region = null;
 			}
 		}
-		
-		// game objects
 		if(floor1_region!=null) {
 			if(floor1_region.getTexture().isLoadedToHardware()) {
 				floor1_region.getTexture().unload();
 				floor1_region = null;
 			}
+		}
+		if(floor2_region!=null) {
 			if(floor2_region.getTexture().isLoadedToHardware()) {
 				floor2_region.getTexture().unload();
 				floor2_region = null;
 			}
+		}
+		if(player_region!=null) {
 			if(player_region.getTexture().isLoadedToHardware()) {
 				player_region.getTexture().unload();
 				player_region = null;
 			}
-			if(complete_stars_region.getTexture().isLoadedToHardware()) {
-				complete_stars_region.getTexture().unload();
-				complete_stars_region = null;
+		}
+		if(complete_region!=null) { 
+			if(complete_region.getTexture().isLoadedToHardware()) {
+				complete_region.getTexture().unload();
+				complete_region = null;
 			}
 		}
 	}
 		
 	// ============================ LOAD TEXTURES (SHARED) ================= //
-	private void loadSharedTextures() {
+	private void loadButtonTextures() {
 		// Store the current asset base path to apply it after we've loaded our textures
 		mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
 		// Set our shared assets folder to "assets/gfx/"
@@ -265,7 +267,7 @@ public class ResourceManager extends Object {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
 	}
 	// ============================ UNLOAD TEXTURES (SHARED) ============= //
-	private void unloadSharedTextures() {
+	private void unloadButtonTextures() {
 		// button texture
 		if (menubuttonTiledTextureRegion!=null) {
 			if(menubuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {

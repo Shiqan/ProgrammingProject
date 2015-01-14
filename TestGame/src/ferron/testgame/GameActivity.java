@@ -240,7 +240,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             		@Override
             		public void onCompletion(MediaPlayer mp) {
             			Log.i("COMPLETION", mPlayer.getX()+"");
-            			
+            			// TODO play victory music
             		}
             	});
 			} else {
@@ -257,7 +257,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	 * Create the basic game HUD
 	 */
 	private void createHUD() {	
-		// TODO change pause position??
 		// Create Pause button
 		ButtonSprite pPauseButton = new ButtonSprite(0f,0f, 
 				ResourceManager.pausebuttonTiledTextureRegion.getTextureRegion(0), 
@@ -379,21 +378,11 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE)) {
-					plevelObject = new Sprite(x, y, ResourceManager.complete_stars_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager()) {
-						@Override
-						protected void onManagedUpdate(float pSecondsElapsed) {
-							super.onManagedUpdate(pSecondsElapsed);
-
-							if (mPlayer.collidesWith(this)) {
-								Log.i("COMPLETED", "LEVEL");
-								
-								this.setVisible(false);
-								this.setIgnoreUpdate(true);
-								
-							}
-						}
-					};
-					plevelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1, 1, 1.3f)));
+					plevelObject = new Sprite(x, y, ResourceManager.complete_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject.setScale(0.2f);				
+					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
+					body.setUserData("levelComplete");
+					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
 				}				
 				else {
 					throw new IllegalArgumentException();
@@ -424,29 +413,46 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 						mPlayer.setfloorContact();
 					}
 					
+					// FLOOR 1
 					if ((x1.getBody().getUserData().equals("floor1") && x2.getBody().getUserData().equals("player")) 
 							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("floor1"))) {
 						//Log.i("TOUCHED", "floor1");
 					}
+					
+					// FLOOR 2
 					if ((x1.getBody().getUserData().equals("floor2") && x2.getBody().getUserData().equals("player")) 
 							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("floor2"))) {
 						mPlayer.onDie();
 					}
 					
+					// BOX				
 					// TODO improve collision detection
 					// box height = 25.6
 					if (x1.getBody().getUserData().equals("box") && x2.getBody().getUserData().equals("player")) {
-						//Log.i("TOUCH EVENT", "BOXTOUCHED" + mPlayer.getX());        
+						Log.i("CONTACT EVENT", "BOXTOUCHED" + mPlayer.getX());        
 						if (x2.getBody().getPosition().x < x1.getBody().getPosition().x && x2.getBody().getPosition().y < x1.getBody().getPosition().y) {
 							mPlayer.onDie();
 						}
 					}
 					
 					if (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("box")) {
-						Log.i("TOUCH EVENT", "TOUCHED" + mPlayer.getX());        
+						Log.i("CONTACT EVENT", "BOXTOUCHED" + mPlayer.getX());        
 						if (x1.getBody().getPosition().x < x2.getBody().getPosition().x && x1.getBody().getPosition().y < x2.getBody().getPosition().y) {
 							mPlayer.onDie();
 						}
+					}
+					
+					// LEVELCOMPLETE
+					if ((x1.getBody().getUserData().equals("levelComplete") && x2.getBody().getUserData().equals("player")) 
+							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("levelComplete"))) {
+						Log.i("CONTACT EVENT", "levelComplete" + mPlayer.getX());
+						mContinuousTouch = true;
+						float alpha = mPlayer.getAlpha(); 
+						if (alpha <= 0.0) {
+							showLayer(2);
+						}
+						mPlayer.setAlpha(mPlayer.getAlpha()-0.1f);
+						
 					}
 				}
 			}
@@ -516,8 +522,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	    switch (pLayerType) {
 		    // Pause
 		    case 0:
-		    	mGameScene.setIgnoreUpdate(true);
 		    	pLayerTitleString = "PAUSED";
+		    	mGameScene.setIgnoreUpdate(true);
 		    	pCreateResumeButton = true;
 		    	break;
 		    
@@ -534,11 +540,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		    // Game completed
 		    case 2:
 		    	pLayerTitleString = "COMPLETED!";
-		    	ResourceManager.getInstance().engine.registerUpdateHandler(new TimerHandler(5f, new ITimerCallback() 	{									
-				    public void onTimePassed(final TimerHandler pTimerHandler) {
-				    	mGameScene.setIgnoreUpdate(true);
-				    }
-				}));
+		    	mGameScene.setIgnoreUpdate(true);
 		    	break;
 	    }	
 			
@@ -671,11 +673,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// ===========================================================
 	// LIFE CYCLE 
 	// ===========================================================
-	@Override
-	public void onResumeGame() {
-		
-		super.onResumeGame();
-	}
 	
 	@Override
 	public void onPauseGame() {
@@ -684,7 +681,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			ResourceManager.gameMusic.pause();
 			showLayer(0);
 		}
-		super.onResumeGame();
+		super.onPauseGame();
 	}
 
 
