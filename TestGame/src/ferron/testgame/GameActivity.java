@@ -98,6 +98,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private boolean mFirstTouch = false;
 	public static boolean mContinuousTouch = false;
 	private boolean mDied = false;
+	private boolean mCompleted = false;
 	
 	// LevelLoader tags
 	private final String TAG_ENTITY = "entity";
@@ -111,6 +112,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_ALPHA_BOX = "alpha";
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
+	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HAND = "hand";
+	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_CLING = "cling";
+	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_TEXT = "text";
 
 	// ====================================================
 	// CREATE ENGINE 
@@ -172,10 +176,10 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		ResourceManager.loadGameResources();
 		
 		// Create scene
-		this.mGameScene = new Scene();
-		this.mGameScene.setOnSceneTouchListener(this);
+		mGameScene = new Scene();
+		mGameScene.setOnSceneTouchListener(this);
 		//this.mGameScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
-		this.mGameScene.setBackground(new SpriteBackground(new Sprite(mCameraWidth/2,mCameraHeight/2,mCameraWidth, mCameraHeight, ResourceManager.gameBackgroundTextureRegion, ResourceManager.getInstance().engine.getVertexBufferObjectManager())));
+		mGameScene.setBackground(new SpriteBackground(new Sprite(mCameraWidth/2,mCameraHeight/2,mCameraWidth, mCameraHeight, ResourceManager.gameBackgroundTextureRegion, ResourceManager.getInstance().engine.getVertexBufferObjectManager())));
 		
 		// Create HUD, PhysicsWorld and load the level
 		createHUD();
@@ -204,13 +208,12 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
 			if(ResourceManager.getInstance().engine!=null) {
-				if(mCamera.getHUD().equals(layer) && !mDied) {
+				if(mCamera.getHUD().equals(layer) && !mDied & !mCompleted) {
 					layer.registerUpdateHandler(SlideOut);
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);
 					ResourceManager.gameMusic.play();
-				}
-				else {
+				} else {
 					ResourceManager.unloadGameResources();
 					Intent intent = new Intent(ResourceManager.getInstance().context, MainActivity.class);
 				    startActivity(intent);
@@ -233,16 +236,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             
             // Start the game on the first touch
             if (!mFirstTouch) {
-            	mPlayer.setRunning();
+            	mPlayer.start();
             	mFirstTouch = true;
             	ResourceManager.gameMusic.play();
-            	ResourceManager.gameMusic.setOnCompletionListener(new OnCompletionListener() {
-            		@Override
-            		public void onCompletion(MediaPlayer mp) {
-            			Log.i("COMPLETION", mPlayer.getX()+"");
-            			// TODO play victory music
-            		}
-            	});
 			} else {
             	mContinuousTouch = true;
 				mPlayer.jump();
@@ -269,7 +265,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Layer
-				ResourceManager.clickSound.play();
+				ResourceManager.onClickSound.play();
 				ResourceManager.gameMusic.pause();
 				showLayer(0);
 		}});		
@@ -283,8 +279,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	/**
 	 * Create the physicsworld with 60 steps per second and a gravity of -28
 	 */
-	private void createPhysics()
-	{
+	private void createPhysics() {
 		mPhysicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, -28), false);	
 		mPhysicsWorld.setContactListener(contactListener());
 		mGameScene.registerUpdateHandler(mPhysicsWorld);
@@ -299,10 +294,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		
 		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
 		
-		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
-		{
-			public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException 
-			{
+		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL) {
+			public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException {
 				final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 				final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 				
@@ -335,14 +328,14 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					body.setUserData("box");
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
 				
-				}
-				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER)) {
-					mPlayer = new Player(x, y, ResourceManager.getInstance().engine.getVertexBufferObjectManager(), mCamera, mPhysicsWorld) {
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER)) {
+					mPlayer = new Player(x, y, mCamera, mPhysicsWorld) {
 						@Override
 						public void onDie()	{
 							if (!mDied) {
 								mCamera.setChaseEntity(null);
-								ResourceManager.gameMusic.pause();							
+								ResourceManager.gameMusic.pause();	
+								ResourceManager.onDieSound.play();
 								explode((int) mPlayer.getX(), (int) mPlayer.getY());
 														
 								mPlayer.setVisible(false);
@@ -352,8 +345,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 						}
 					};
 					plevelObject = mPlayer;
-				}
-				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_FLOOR1)) {
+					
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_FLOOR1)) {
 					int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 									
@@ -364,8 +357,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					body.setUserData("floor1");
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
 				
-				}
-				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_FLOOR2)) {
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_FLOOR2)) {
 					int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 					
@@ -376,15 +368,27 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					body.setUserData("floor2");
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
 				
-				}
-				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE)) {
+				// TODO extend tutorial?
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HAND)) {
+					plevelObject = new Sprite(x, y, ResourceManager.hand_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject.setScale(0.5f);
+					
+					Text pTutorialText = new Text(0,0,ResourceManager.fontDefault32Bold,"TOUCH TO JUMP",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					pTutorialText.setPosition(x-(pTutorialText.getWidth()/3),mCamera.getHeight()/3);
+					mGameScene.attachChild(pTutorialText);
+											
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_CLING)) {
+					plevelObject = new Sprite(x, y, ResourceManager.cling_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject.setScale(0.2f);	
+					plevelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1f, 0.1f, 0.3f)));
+					
+				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE)) {
 					plevelObject = new Sprite(x, y, ResourceManager.complete_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 					plevelObject.setScale(0.2f);				
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("levelComplete");
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
-				}				
-				else {
+				} else {
 					throw new IllegalArgumentException();
 				}
 
@@ -408,7 +412,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				final Fixture x2 = contact.getFixtureB();
 				
 				if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null) {
-					
 					if (x1.getBody().getUserData().equals("player") || x2.getBody().getUserData().equals("player")) {
 						mPlayer.setfloorContact();
 					}
@@ -427,17 +430,30 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					
 					// BOX				
 					// TODO improve collision detection
-					// box height = 25.6
-					if (x1.getBody().getUserData().equals("box") && x2.getBody().getUserData().equals("player")) {
-						Log.i("CONTACT EVENT", "BOXTOUCHED" + mPlayer.getX());        
-						if (x2.getBody().getPosition().x < x1.getBody().getPosition().x && x2.getBody().getPosition().y < x1.getBody().getPosition().y) {
+					// change error margin of 1 to be relative of box.y??
+										
+					if (x2.getBody().getUserData().equals("player") && x1.getBody().getUserData().equals("box")) {
+						float x = x1.getBody().getPosition().x;
+//						Log.i("CONTACT EVENT", "BOUND " + (x - 1));
+//						Log.i("CONTACT EVENT", "PLAYER X " + x2.getBody().getPosition().x);
+//						Log.i("CONTACT EVENT", "BOX X " + x1.getBody().getPosition().x);
+//						Log.i("CONTACT EVENT", "PLAYER Y " + x2.getBody().getPosition().y);
+//						Log.i("CONTACT EVENT", "BOX Y " + x1.getBody().getPosition().y);
+//					
+						if (!((x - 1) < x2.getBody().getPosition().x)) {
 							mPlayer.onDie();
 						}
 					}
 					
 					if (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("box")) {
-						Log.i("CONTACT EVENT", "BOXTOUCHED" + mPlayer.getX());        
-						if (x1.getBody().getPosition().x < x2.getBody().getPosition().x && x1.getBody().getPosition().y < x2.getBody().getPosition().y) {
+						float x = x2.getBody().getPosition().x;
+//						Log.i("CONTACT EVENT", "BOUND1 " + (x - 1));
+//						Log.i("CONTACT EVENT", "PLAYER X " + x1.getBody().getPosition().x);
+//						Log.i("CONTACT EVENT", "BOX X " + x2.getBody().getPosition().x);
+//						Log.i("CONTACT EVENT", "PLAYER Y " + x1.getBody().getPosition().y);
+//						Log.i("CONTACT EVENT", "BOX Y " + x2.getBody().getPosition().y);
+					
+						if (!((x - 1) < x1.getBody().getPosition().x)) {
 							mPlayer.onDie();
 						}
 					}
@@ -445,14 +461,36 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					// LEVELCOMPLETE
 					if ((x1.getBody().getUserData().equals("levelComplete") && x2.getBody().getUserData().equals("player")) 
 							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("levelComplete"))) {
-						Log.i("CONTACT EVENT", "levelComplete" + mPlayer.getX());
-						mContinuousTouch = true;
-						float alpha = mPlayer.getAlpha(); 
-						if (alpha <= 0.0) {
-							showLayer(2);
+						if (ResourceManager.onVictorySound != null && !ResourceManager.onVictorySound.isPlaying()) {
+							ResourceManager.gameMusic.pause();
+							ResourceManager.onVictorySound.play();
 						}
-						mPlayer.setAlpha(mPlayer.getAlpha()-0.1f);
 						
+						mContinuousTouch = true;
+						mCompleted = true;
+						float alpha = mPlayer.getAlpha(); 
+						
+						if (alpha <= 0.0) {
+							mCamera.setChaseEntity(null);
+							int pX = (int) mPlayer.getX();
+							int pY = (int) mPlayer.getY();
+							
+							explode(pX, pY);
+							explode(pX-10, pY-10);
+							explode(pX+10, pY+10);
+							explode(pX-10, pY+10);
+							explode(pX+10, pY-10);
+							explode(pX-100, pY-100);
+							explode(pX+100, pY+100);
+							explode(pX-100, pY+100);
+							explode(pX+100, pY-100);
+					
+							showLayer(2);
+							mContinuousTouch = false;
+						} else {
+							mPlayer.setAlpha(mPlayer.getAlpha()-0.125f);
+							explode((int) mPlayer.getX(), (int) mPlayer.getY() + 100);
+						}
 					}
 				}
 			}
@@ -527,7 +565,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		    	pCreateResumeButton = true;
 		    	break;
 		    
-		    // Game over
+		    // Game over (pause after 5 seconds)
 		    case 1:
 		    	pLayerTitleString = "GAME OVER!";
 		    	ResourceManager.getInstance().engine.registerUpdateHandler(new TimerHandler(5f, new ITimerCallback() 	{									
@@ -537,10 +575,14 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				}));
 		    	break;
 		    	
-		    // Game completed
+		    // Game completed (pause after 2 seconds)
 		    case 2:
 		    	pLayerTitleString = "COMPLETED!";
-		    	mGameScene.setIgnoreUpdate(true);
+		    	ResourceManager.getInstance().engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 	{									
+				    public void onTimePassed(final TimerHandler pTimerHandler) {
+				    	mGameScene.setIgnoreUpdate(true);
+				    }
+				}));
 		    	break;
 	    }	
 			
@@ -572,7 +614,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Main Menu.
-				ResourceManager.clickSound.play();
+				ResourceManager.onClickSound.play();
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(ResourceManager.getInstance().context, MainActivity.class);
 			    startActivity(intent);
@@ -596,7 +638,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Main Menu.
-				ResourceManager.clickSound.play();
+				ResourceManager.onClickSound.play();
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(ResourceManager.getInstance().context, GameActivity.class);
 			    startActivity(intent);
@@ -621,7 +663,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				public void onClick(ButtonSprite pButtonSprite,
 						float pTouchAreaLocalX, float pTouchAreaLocalY) {
 					// Play the click sound and show the Main Menu.
-					ResourceManager.clickSound.play();
+					ResourceManager.onClickSound.play();
 					layer.registerUpdateHandler(SlideOut);
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);

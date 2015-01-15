@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<level width="56371" height="1000">	
+<level width="36300" height="1000">	
 	<entity x="20" y="1" type="player" />
 	<entity x="0" y="0" width="36300" height="2" type="floor1" />
 	
 	<!--	
-			+- x += 130 per second
+		box baseline y="26" 
 			
-			min x distance jump between 180 
-			max x distance no jump between 175 
-			
-			box baseline y="26" 
-			box +1 x += 51 y += 52 
-			box -1 x += 51 y -= 52 
-			
-			staircase up x += 150 y += 59 
-			staircase jumpdown x += 250 y -= 59 			
-			staircase falldown x += 150 y -= 59
+		staircase up x += 150 y += 59 
+		staircase jumpdown x += 250 y -= 59 			
+		staircase falldown x += 150 y -= 59
 	-->
+	
 	<!--
+	<entity x="500" y="0" width="900" height="4" type="floor2" />
+	<entity x="500" y="26" type="levelComplete" />
+	<entity x="650" y="85" type="levelComplete" />
+	<entity x="800" y="144" type="levelComplete" />
+	<entity x="950" y="203" type="levelComplete" />
+	<entity x="1100" y="262" type="levelComplete" />
+	<entity x="1250" y="321" type="levelComplete" />
+	<entity x="1400" y="380" type="levelComplete" />
+	<entity x="1550" y="439" type="levelComplete" />
+	<entity x="1700" y="498" type="levelComplete" />
+	-->
+	
+	<entity x="1030" y="-100" type="hand" />	
+	<entity x="950" y="26" type="cling" />	
+	
 	<entity x="1100" y="0" width="400" height="4" type="floor2" />
 	<entity x="1100" y="26" type="box" />	
 	<entity x="1300" y="26" type="box" />
@@ -61,9 +70,7 @@
 	<entity x="7700" y="262" type="box" />
 	<entity x="7850" y="321" type="box" />
 	<entity x="8000" y="262" type="box" />
-	<entity x="8051" y="262" type="box" />
-	<entity x="8102" y="262" type="box" />
-	<entity x="8153" y="262" type="box" />
+	<entity x="8150" y="321" type="box" />
 	<entity x="8300" y="203" type="box" />
 	<entity x="8450" y="144" type="box" />
 	<entity x="8650" y="144" type="box" />
@@ -111,8 +118,8 @@
 	<entity x="15300" y="26" type="box" />
 	<entity x="15450" y="85" type="box" />
 	<entity x="15600" y="26" type="box" />
-
-	<entity x="16000" y="0" width="3600" height="4" type="floor2" />
+	
+	<entity x="16000" y="0" width="1500" height="4" type="floor2" />
 	<entity x="16000" y="26" type="box" />
 	<entity x="16150" y="85" type="box" />
 	<entity x="16300" y="144" type="box" />
@@ -123,11 +130,13 @@
 	<entity x="17050" y="321" type="box" />
 	<entity x="17200" y="380" type="box" />
 	<entity x="17400" y="450" type="box" />
-	<entity x="17456" y="144" type="box" />
-	<entity x="17507" y="144" type="box"  />
-	<entity x="17750" y="85" type="box" alpha="true" />
+	<entity x="17500" y="26" type="box" />
+	
+	<entity x="17700" y="0" width="1900" height="4" type="floor2" />
+	<entity x="17700" y="26" type="box" alpha="true" />
+	<entity x="17850" y="85" type="box" alpha="true" />
 	<entity x="18000" y="26" type="box" alpha="true" />
-	<entity x="18150" y="85" type="box" alpha="true" />
+	<entity x="18150" y="86" type="box" alpha="true" />
 	<entity x="18300" y="144" type="box" alpha="true" />
 	<entity x="18450" y="85" type="box" alpha="true" />
 	<entity x="18600" y="144" type="box" alpha="true" />
@@ -226,7 +235,7 @@
 	<entity x="33050" y="321" type="box" />
 	<entity x="33250" y="203" type="box" />
 	<entity x="33510" y="203" type="box" />
-	-->
+	
 	<entity x="35000" y="0" width="900" height="4" type="floor2" />
 	<entity x="35000" y="26" type="levelComplete" />
 	<entity x="35150" y="85" type="levelComplete" />
@@ -237,7 +246,5 @@
 	<entity x="35900" y="380" type="levelComplete" />
 	<entity x="36050" y="439" type="levelComplete" />
 	<entity x="36200" y="498" type="levelComplete" />
-	<entity x="36350" y="557" type="levelComplete" />
-	<entity x="36500" y="606" type="levelComplete" />
-		
+	
 </level>

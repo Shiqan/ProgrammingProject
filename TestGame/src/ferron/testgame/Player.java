@@ -16,12 +16,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public abstract class Player extends AnimatedSprite {
 
 	private Body mBody;
-	private boolean mRun = false;
+	private boolean mMove = false;
 	private boolean mFloorContact = true;
 	
-	// Constructor
-	public Player(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld) {
-		super(pX, pY, ResourceManager.getInstance().player_region, vbo);
+	// Create AnimatedSprite
+	public Player(float pX, float pY, Camera camera, PhysicsWorld physicsWorld) {
+		super(pX, pY, ResourceManager.getInstance().player_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 		createPhysics(camera, physicsWorld);
 		camera.setChaseEntity(this);
 	}
@@ -38,6 +38,8 @@ public abstract class Player extends AnimatedSprite {
 				super.onUpdate(pSecondsElapsed);
 				camera.onUpdate(0.1f);
 				
+				//Log.i("PLAYER", mBody.getPosition().x + "");
+				
 				if (getY() <= 0) {
 					onDie();
 				}
@@ -46,15 +48,15 @@ public abstract class Player extends AnimatedSprite {
 					jump();
 				}
 				
-				if (mRun) {	
+				if (mMove) {	
 					mBody.setLinearVelocity(new Vector2(8, mBody.getLinearVelocity().y)); 
 				} 
 	        }
 		});
 	}
 	
-	public void setRunning() 	{
-		mRun = true;
+	public void start() 	{
+		mMove = true;
 		
 		final long[] PLAYER_ANIMATE = new long[] { 100, 100, 100, 100, 100, 100 };
 		animate(PLAYER_ANIMATE, 0, 5, true);
@@ -65,7 +67,7 @@ public abstract class Player extends AnimatedSprite {
 			return; 
 		}
 
-		mBody.setLinearVelocity(new Vector2(-8, 11));
+		mBody.setLinearVelocity(new Vector2(0, 11));
 	}
 	
 	public void setfloorContact() {
@@ -76,6 +78,6 @@ public abstract class Player extends AnimatedSprite {
 		mFloorContact = false;
 	}
 	
-	// Override onDie in each level
+	// Override onDie in each level for custom deaths per level
 	public abstract void onDie();
 }

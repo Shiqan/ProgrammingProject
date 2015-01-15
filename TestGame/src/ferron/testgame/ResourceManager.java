@@ -54,13 +54,18 @@ public class ResourceManager extends Object {
 	public ITiledTextureRegion player_region;
 	public static ITextureRegion complete_region;
 	
+	public static ITextureRegion hand_region;
+	public static ITextureRegion cling_region;
+	
 	public static ITiledTextureRegion menubuttonTiledTextureRegion;
 	public static ITiledTextureRegion pausebuttonTiledTextureRegion;
 	public static ITiledTextureRegion restartbuttonTiledTextureRegion;
 	public static ITiledTextureRegion resumebuttonTiledTextureRegion;
 	
 	public static Music gameMusic;
-	public static Sound clickSound;
+	public static Music onVictorySound;
+	public static Sound onClickSound;
+	public static Sound onDieSound;
 	
 	public static Font fontDefault32Bold;
 	public static Font fontDefault72Bold;
@@ -153,18 +158,73 @@ public class ResourceManager extends Object {
 		}
 		
 		if (floor1_region == null) {
-			BuildableBitmapTextureAtlas gameTextureAtlas = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-	        
-			floor1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "floor1.png");
-			floor2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "floor2.png");
-	        player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, context, "test.png", 12, 8);
-	        complete_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, context, "square.png");
-	        
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+			floor1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "floor1.png");			
 	    	try {
-	    		gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-	    		gameTextureAtlas.load();
+	    		texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+	    		texture.load();
 			} 
 	    	catch (TextureAtlasBuilderException e) {
+				Debug.e(e);
+			}
+		}
+		
+		if (floor2_region == null) {
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+			floor2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "floor2.png");
+	       try {
+				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+				texture.load();
+			} 
+			catch (TextureAtlasBuilderException e) {
+				Debug.e(e);
+			}
+		}
+		
+		if (player_region == null) {
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 384, 256, TextureOptions.BILINEAR);
+			player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "test.png", 12, 8);
+	        try {
+				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+				texture.load();
+			} 
+			catch (TextureAtlasBuilderException e) {
+				Debug.e(e);
+			}
+		}
+		
+		if (complete_region == null) {
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+			complete_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "square.png");
+	        try {
+				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+				texture.load();
+			} 
+			catch (TextureAtlasBuilderException e) {
+				Debug.e(e);
+			}
+		}
+		
+		if (hand_region == null) {
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 378, 521, TextureOptions.BILINEAR);
+			hand_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "hand2.png");
+			try {
+				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+				texture.load();
+			} 
+			catch (TextureAtlasBuilderException e) {
+				Debug.e(e);
+			}
+		}
+		
+		if (cling_region == null) {
+			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 800, 800, TextureOptions.BILINEAR);
+			cling_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "cling2.png");
+			try {
+				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+				texture.load();
+			} 
+			catch (TextureAtlasBuilderException e) {
 				Debug.e(e);
 			}
 		}
@@ -173,40 +233,52 @@ public class ResourceManager extends Object {
 	}
 	// ============================ UNLOAD TEXTURES (GAME) =============== //
 	private void unloadGameTextures(){
-		if(gameBackgroundTextureRegion!=null) {
-			if(gameBackgroundTextureRegion.getTexture().isLoadedToHardware()) {
+		if (gameBackgroundTextureRegion!=null) {
+			if (gameBackgroundTextureRegion.getTexture().isLoadedToHardware()) {
 				gameBackgroundTextureRegion.getTexture().unload();
 				gameBackgroundTextureRegion = null;
 			}
 		}
-		if(box_region!=null) {
-			if(box_region.getTexture().isLoadedToHardware()) {
+		if (box_region!=null) {
+			if (box_region.getTexture().isLoadedToHardware()) {
 				box_region.getTexture().unload();
 				box_region = null;
 			}
 		}
-		if(floor1_region!=null) {
-			if(floor1_region.getTexture().isLoadedToHardware()) {
+		if (floor1_region!=null) {
+			if (floor1_region.getTexture().isLoadedToHardware()) {
 				floor1_region.getTexture().unload();
 				floor1_region = null;
 			}
 		}
-		if(floor2_region!=null) {
-			if(floor2_region.getTexture().isLoadedToHardware()) {
+		if (floor2_region!=null) {
+			if (floor2_region.getTexture().isLoadedToHardware()) {
 				floor2_region.getTexture().unload();
 				floor2_region = null;
 			}
 		}
-		if(player_region!=null) {
-			if(player_region.getTexture().isLoadedToHardware()) {
+		if (player_region!=null) {
+			if (player_region.getTexture().isLoadedToHardware()) {
 				player_region.getTexture().unload();
 				player_region = null;
 			}
 		}
-		if(complete_region!=null) { 
-			if(complete_region.getTexture().isLoadedToHardware()) {
+		if (complete_region!=null) { 
+			if (complete_region.getTexture().isLoadedToHardware()) {
 				complete_region.getTexture().unload();
 				complete_region = null;
+			}
+		}
+		if (hand_region!=null) { 
+			if (hand_region.getTexture().isLoadedToHardware()) {
+				hand_region.getTexture().unload();
+				hand_region = null;
+			}
+		}
+		if (cling_region!=null) { 
+			if (cling_region.getTexture().isLoadedToHardware()) {
+				cling_region.getTexture().unload();
+				cling_region = null;
 			}
 		}
 	}
@@ -270,25 +342,25 @@ public class ResourceManager extends Object {
 	private void unloadButtonTextures() {
 		// button texture
 		if (menubuttonTiledTextureRegion!=null) {
-			if(menubuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
+			if (menubuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
 				menubuttonTiledTextureRegion.getTexture().unload();
 				menubuttonTiledTextureRegion = null;
 			}
 		}
 		if (pausebuttonTiledTextureRegion!=null) {
-			if(pausebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
+			if (pausebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
 				pausebuttonTiledTextureRegion.getTexture().unload();
 				pausebuttonTiledTextureRegion = null;
 			}
 		}
 		if (restartbuttonTiledTextureRegion!=null) { 
-			if(restartbuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
+			if (restartbuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
 				restartbuttonTiledTextureRegion.getTexture().unload();
 				restartbuttonTiledTextureRegion = null;
 			}
 		} 
 		if (resumebuttonTiledTextureRegion!=null) {
-			if(resumebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
+			if (resumebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
 				resumebuttonTiledTextureRegion.getTexture().unload();
 				resumebuttonTiledTextureRegion = null;
 			}
@@ -298,38 +370,60 @@ public class ResourceManager extends Object {
 	// =========================== LOAD SOUNDS ======================== //
 	private void loadSounds(){
 		SoundFactory.setAssetBasePath("sfx/");
-		if(clickSound==null) {
+		if (onClickSound==null) {
 			try {
-				// Create the clickSound object via the SoundFactory class
-				clickSound	= SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "click.mp3");
+				onClickSound = SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "click.mp3");
+			} catch (final IOException e) {
+				Log.v("Sounds Load","Exception:" + e.getMessage());
+			}
+		}
+		if (onDieSound==null) {
+			try {
+				onDieSound	= SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "die.wav");
 			} catch (final IOException e) {
 				Log.v("Sounds Load","Exception:" + e.getMessage());
 			}
 		}
 	
 		MusicFactory.setAssetBasePath("sfx/");
-		if(gameMusic==null) {
+		if (gameMusic==null) {
 			try {
-				// Create the clickSound object via the SoundFactory class
 				gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "vanguard2.mp3");
 			} catch (final IOException e) {
 				Log.e("Music Load","Exception:" + e.getMessage());
 			}
 		}
-	}
-	// =========================== UNLOAD SOUNDS ====================== //
-	private void unloadSounds(){
-		if (clickSound!=null) {
-			if(clickSound.isLoaded()) {
-				// Unload the clickSound object. Make sure to stop it first.
-				clickSound.stop();
-				engine.getSoundManager().remove(clickSound);
-				clickSound = null;
+		if (onVictorySound==null) {
+			try {
+				onVictorySound	= MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "victory.mp3");
+			} catch (final IOException e) {
+				Log.v("Sounds Load","Exception:" + e.getMessage());
 			}
 		}
-		
+	}
+	// =========================== UNLOAD SOUNDS ====================== //
+	// Unload the sounds and music and make sure to stop it first
+	private void unloadSounds(){
+		if (onClickSound!=null) {
+			if (onClickSound.isLoaded()) {
+				onClickSound.stop();
+				engine.getSoundManager().remove(onClickSound);
+				onClickSound = null;
+			}
+		}
+		if (onDieSound!=null) {
+			if (onDieSound.isLoaded()) {
+				onDieSound.stop();
+				engine.getSoundManager().remove(onDieSound);
+				onDieSound = null;
+			}
+		}
+		if (onVictorySound!=null) {
+			onVictorySound.stop();
+			engine.getMusicManager().remove(onVictorySound);
+			onVictorySound = null;
+		}
 		if (gameMusic!=null) {
-			// Unload the clickSound object. Make sure to stop it first.
 			gameMusic.stop();
 			engine.getMusicManager().remove(gameMusic);
 			gameMusic = null;
@@ -338,7 +432,6 @@ public class ResourceManager extends Object {
 
 	// ============================ LOAD FONTS ========================== //
 	private void loadFonts(){
-		// Create the Font objects via FontFactory class
 		if (fontDefault32Bold==null) {
 			fontDefault32Bold = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD),  32f, true, Color.WHITE_ARGB_PACKED_INT);
 			fontDefault32Bold.load();
@@ -350,7 +443,6 @@ public class ResourceManager extends Object {
 	}
 	// ============================ UNLOAD FONTS ======================== //
 	private void unloadFonts(){
-		// Unload the fonts
 		if (fontDefault32Bold!=null) {
 			fontDefault32Bold.unload();
 			fontDefault32Bold = null;
