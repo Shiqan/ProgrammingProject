@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<level width="36300" height="1000">	
+<level width="40000" height="1000">	
 	<entity x="20" y="1" type="player" />
-	<entity x="0" y="0" width="36300" height="2" type="floor1" />
+	<entity x="0" y="0" width="36200" height="2" type="floor1" />
 	
 	<!--	
 		box baseline y="26" 
@@ -13,6 +13,22 @@
 	
 	<!--
 	<entity x="500" y="0" width="900" height="4" type="floor2" />
+	<entity x="500" y="26" type="box" />
+	<entity x="650" y="85" type="box" />
+	<entity x="800" y="144" type="box" />
+	<entity x="950" y="203" type="box" />
+	<entity x="1100" y="262" type="box" />
+	<entity x="1250" y="321" type="box" />
+	<entity x="1400" y="380" type="box" />
+	<entity x="1550" y="439" type="box" />
+	<entity x="1700" y="498" type="box" />
+	<entity x="1850" y="557" type="box" />
+	<entity x="2000" y="606" type="box" />
+	<entity x="2150" y="665" type="box" />
+	<entity x="2300" y="724" type="box" />
+	
+	
+	<entity x="500" y="0" width="900" height="4" type="floor2" />
 	<entity x="500" y="26" type="levelComplete" />
 	<entity x="650" y="85" type="levelComplete" />
 	<entity x="800" y="144" type="levelComplete" />
@@ -23,7 +39,6 @@
 	<entity x="1550" y="439" type="levelComplete" />
 	<entity x="1700" y="498" type="levelComplete" />
 	-->
-	
 	<entity x="1030" y="-100" type="hand" />	
 	<entity x="950" y="26" type="cling" />	
 	
@@ -246,5 +261,6 @@
 	<entity x="35900" y="380" type="levelComplete" />
 	<entity x="36050" y="439" type="levelComplete" />
 	<entity x="36200" y="498" type="levelComplete" />
+	<entity x="36350" y="557" type="levelComplete" />
 	
 </level>

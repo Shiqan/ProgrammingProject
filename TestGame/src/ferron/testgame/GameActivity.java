@@ -97,8 +97,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private PhysicsWorld mPhysicsWorld;
 	private boolean mFirstTouch = false;
 	public static boolean mContinuousTouch = false;
-	private boolean mDied = false;
-	private boolean mCompleted = false;
 	
 	// LevelLoader tags
 	private final String TAG_ENTITY = "entity";
@@ -114,7 +112,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HAND = "hand";
 	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_CLING = "cling";
-	private final String TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_TEXT = "text";
 
 	// ====================================================
 	// CREATE ENGINE 
@@ -195,6 +192,10 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		mGameHud.setScaleCenter(0f, 0f);
 		mGameHud.setScale(ResourceManager.getInstance().cameraScaleFactorX,ResourceManager.getInstance().cameraScaleFactorY);
 
+		
+		ResourceManager.gameMusic.play();
+		mPlayer.start();
+		
 		return mGameScene;
 	}
 	
@@ -208,7 +209,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
 			if(ResourceManager.getInstance().engine!=null) {
-				if(mCamera.getHUD().equals(layer) && !mDied & !mCompleted) {
+				if(mCamera.getHUD().equals(layer) &!mPlayer.isIgnoreUpdate()) {
 					layer.registerUpdateHandler(SlideOut);
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);
@@ -235,14 +236,14 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             Log.i("TOUCH EVENT", "TOUCHED" + mPlayer.getX());        
             
             // Start the game on the first touch
-            if (!mFirstTouch) {
-            	mPlayer.start();
-            	mFirstTouch = true;
-            	ResourceManager.gameMusic.play();
-			} else {
+//            if (!mFirstTouch) {
+//            	mPlayer.start();
+//            	mFirstTouch = true;
+//            	ResourceManager.gameMusic.play();
+//			} else {
             	mContinuousTouch = true;
 				mPlayer.jump();
-			}
+//			}
         } else if (pSceneTouchEvent.isActionUp()) {
         	mContinuousTouch = false;
         }
@@ -326,21 +327,22 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("box");
-					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
+					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
 				
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER)) {
 					mPlayer = new Player(x, y, mCamera, mPhysicsWorld) {
 						@Override
 						public void onDie()	{
-							if (!mDied) {
+							if (!mPlayer.isIgnoreUpdate()) {
 								mCamera.setChaseEntity(null);
 								ResourceManager.gameMusic.pause();	
 								ResourceManager.onDieSound.play();
 								explode((int) mPlayer.getX(), (int) mPlayer.getY());
 														
 								mPlayer.setVisible(false);
-								mDied = true;
+								mPlayer.setIgnoreUpdate(true);
 								showLayer(1);
+								
 							}
 						}
 					};
@@ -355,7 +357,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					plevelObject.setHeight(height);
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("floor1");
-					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
+					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
 				
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_FLOOR2)) {
 					int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
@@ -366,15 +368,15 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					plevelObject.setHeight(height);
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("floor2");
-					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
+					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
 				
 				// TODO extend tutorial?
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HAND)) {
 					plevelObject = new Sprite(x, y, ResourceManager.hand_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 					plevelObject.setScale(0.5f);
 					
-					Text pTutorialText = new Text(0,0,ResourceManager.fontDefault32Bold,"TOUCH TO JUMP",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-					pTutorialText.setPosition(x-(pTutorialText.getWidth()/3),mCamera.getHeight()/3);
+					Text pTutorialText = new Text(0,0,ResourceManager.fontSlimJoe,"TOUCH TO JUMP",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					pTutorialText.setPosition(x-(pTutorialText.getWidth()/4),mCamera.getHeight()/3);
 					mGameScene.attachChild(pTutorialText);
 											
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_CLING)) {
@@ -387,7 +389,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					plevelObject.setScale(0.2f);				
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("levelComplete");
-					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, true, false));
+					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
+				
 				} else {
 					throw new IllegalArgumentException();
 				}
@@ -434,26 +437,30 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 										
 					if (x2.getBody().getUserData().equals("player") && x1.getBody().getUserData().equals("box")) {
 						float x = x1.getBody().getPosition().x;
-//						Log.i("CONTACT EVENT", "BOUND " + (x - 1));
-//						Log.i("CONTACT EVENT", "PLAYER X " + x2.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "BOX X " + x1.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "PLAYER Y " + x2.getBody().getPosition().y);
-//						Log.i("CONTACT EVENT", "BOX Y " + x1.getBody().getPosition().y);
-//					
-						if (!((x - 1) < x2.getBody().getPosition().x)) {
+						Log.i("CONTACT EVENT", "BOUND " + (x - 1));
+						Log.i("CONTACT EVENT", "PLAYER X " + x2.getBody().getPosition().x);
+						Log.i("CONTACT EVENT", "BOX X " + x1.getBody().getPosition().x);
+						Log.i("CONTACT EVENT", "PLAYER Y " + x2.getBody().getPosition().y);
+						Log.i("CONTACT EVENT", "BOX Y " + x1.getBody().getPosition().y);
+						
+						int err = (int) (1 + (x1.getBody().getPosition().y/15.5f));
+						Log.i("ERROR MARGIN", err+"");
+						if (!((x - err) < x2.getBody().getPosition().x)) {
 							mPlayer.onDie();
 						}
 					}
 					
 					if (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("box")) {
 						float x = x2.getBody().getPosition().x;
-//						Log.i("CONTACT EVENT", "BOUND1 " + (x - 1));
-//						Log.i("CONTACT EVENT", "PLAYER X " + x1.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "BOX X " + x2.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "PLAYER Y " + x1.getBody().getPosition().y);
-//						Log.i("CONTACT EVENT", "BOX Y " + x2.getBody().getPosition().y);
+						Log.i("CONTACT EVENT", "BOUND1 " + (x - 1));
+						Log.i("CONTACT EVENT", "PLAYER X " + x1.getBody().getPosition().x);
+						Log.i("CONTACT EVENT", "BOX X " + x2.getBody().getPosition().x);
+						Log.i("CONTACT EVENT", "PLAYER Y " + x1.getBody().getPosition().y);
+						Log.i("CONTACT EVENT", "BOX Y " + x2.getBody().getPosition().y);
 					
-						if (!((x - 1) < x1.getBody().getPosition().x)) {
+						float err = 1 + (x2.getBody().getPosition().y/15.5f);
+						Log.i("ERROR MARGIN", err+"");
+						if (!((x - err) < x1.getBody().getPosition().x)) {
 							mPlayer.onDie();
 						}
 					}
@@ -465,12 +472,13 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 							ResourceManager.gameMusic.pause();
 							ResourceManager.onVictorySound.play();
 						}
-						
-						mContinuousTouch = true;
-						mCompleted = true;
-						float alpha = mPlayer.getAlpha(); 
-						
-						if (alpha <= 0.0) {
+							
+						// TODO fix
+						if (mPlayer.getAlpha() > 0.1f) {
+							mContinuousTouch = true;
+							mPlayer.setAlpha(mPlayer.getAlpha()-0.125f);
+							explode((int) mPlayer.getX(), (int) mPlayer.getY() + 100);
+						} else {
 							mCamera.setChaseEntity(null);
 							int pX = (int) mPlayer.getX();
 							int pY = (int) mPlayer.getY();
@@ -484,12 +492,11 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 							explode(pX+100, pY+100);
 							explode(pX-100, pY+100);
 							explode(pX+100, pY-100);
-					
-							showLayer(2);
+							
+							mPlayer.setIgnoreUpdate(true);
+							
 							mContinuousTouch = false;
-						} else {
-							mPlayer.setAlpha(mPlayer.getAlpha()-0.125f);
-							explode((int) mPlayer.getX(), (int) mPlayer.getY() + 100);
+							showLayer(2);	
 						}
 					}
 				}
@@ -592,19 +599,19 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		layer.attachChild(pBackground);
 		
 		// Create the title text for the Layer
-		Text pLayerTitle = new Text(0,0,ResourceManager.fontDefault32Bold, pLayerTitleString, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		Text pLayerTitle = new Text(0,0,ResourceManager.fontBigJohn, pLayerTitleString, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 		pLayerTitle.setPosition((pBackground.getWidth()/2f),(pBackground.getHeight()-pLayerTitle.getHeight()));
 		layer.attachChild(pLayerTitle);
 		
 		// Create the score text for the Layer
-		Text pScoreText = new Text(0,0,ResourceManager.fontDefault32Bold, "SCORE" ,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-		pScoreText.setPosition((pBackground.getWidth()/3f)-pScoreText.getWidth(),pBackground.getHeight()-(3f*pScoreText.getHeight()));
+		Text pScoreText = new Text(0,0,ResourceManager.fontSlimJoe, "SCORE" ,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		pScoreText.setPosition((pBackground.getWidth()/3f)-pScoreText.getWidth(),pBackground.getHeight()-(4f*pScoreText.getHeight()));
 		layer.attachChild(pScoreText);
 		
 		// Create a menu button
 		ButtonSprite pMainMenuButton = new ButtonSprite(
 				(2f*(pBackground.getWidth()/3f))+pScoreText.getWidth(),
-				pBackground.getHeight()-(3f*pScoreText.getHeight()), 
+				pBackground.getHeight()-(4f*pScoreText.getHeight()), 
 				ResourceManager.menubuttonTiledTextureRegion.getTextureRegion(0), 
 				ResourceManager.menubuttonTiledTextureRegion.getTextureRegion(1), 
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
@@ -628,7 +635,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		// Create a restart button
 		ButtonSprite pRestartButton = new ButtonSprite(
 				(2f*(pBackground.getWidth()/3f))+pScoreText.getWidth(),
-				pBackground.getHeight()-(5f*pScoreText.getHeight()), 
+				pBackground.getHeight()-(7f*pScoreText.getHeight()), 
 				ResourceManager.restartbuttonTiledTextureRegion.getTextureRegion(0), 
 				ResourceManager.restartbuttonTiledTextureRegion.getTextureRegion(1), 
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
@@ -653,7 +660,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		if (pCreateResumeButton) {
 			ButtonSprite pResumeButton = new ButtonSprite(
 					(2f*(pBackground.getWidth()/3f))+pScoreText.getWidth(),
-					pBackground.getHeight()-(7f*pScoreText.getHeight()), 
+					pBackground.getHeight()-(10f*pScoreText.getHeight()), 
 					ResourceManager.resumebuttonTiledTextureRegion.getTextureRegion(0), 
 					ResourceManager.resumebuttonTiledTextureRegion.getTextureRegion(1), 
 					ResourceManager.getInstance().engine.getVertexBufferObjectManager());

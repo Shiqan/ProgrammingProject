@@ -40,10 +40,6 @@ public abstract class Player extends AnimatedSprite {
 				
 				//Log.i("PLAYER", mBody.getPosition().x + "");
 				
-				if (getY() <= 0) {
-					onDie();
-				}
-				
 				if (GameActivity.mContinuousTouch) {
 					jump();
 				}

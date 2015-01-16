@@ -69,6 +69,8 @@ public class ResourceManager extends Object {
 	
 	public static Font fontDefault32Bold;
 	public static Font fontDefault72Bold;
+	public static Font fontSlimJoe;
+	public static Font fontBigJohn;
 	
 	// This variable will be used to revert the TextureFactory's default path when we change it.
 	private String mPreviousAssetBasePath = "";
@@ -440,6 +442,15 @@ public class ResourceManager extends Object {
 			fontDefault72Bold = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 512, 512, Typeface.create(Typeface.DEFAULT, Typeface.BOLD),  72f, true, Color.WHITE_ARGB_PACKED_INT);
 			fontDefault72Bold.load();
 		}
+		FontFactory.setAssetBasePath("fonts/");
+		if (fontSlimJoe==null) {
+			fontSlimJoe = FontFactory.createFromAsset(engine.getFontManager(), engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR, context.getAssets(), "slimjoe.otf", 32f, true, Color.WHITE_ARGB_PACKED_INT);
+			fontSlimJoe.load(); 
+		}
+		if (fontBigJohn==null) {
+			fontBigJohn = FontFactory.createFromAsset(engine.getFontManager(), engine.getTextureManager(), 512, 512, TextureOptions.BILINEAR, context.getAssets(), "bigjohn.otf", 52f, true, Color.WHITE_ARGB_PACKED_INT);
+			fontBigJohn.load(); 
+		}
 	}
 	// ============================ UNLOAD FONTS ======================== //
 	private void unloadFonts(){
@@ -450,6 +461,14 @@ public class ResourceManager extends Object {
 		if (fontDefault72Bold!=null) {
 			fontDefault72Bold.unload();
 			fontDefault72Bold = null;
+		}
+		if (fontSlimJoe!=null) {
+			fontSlimJoe.unload();
+			fontSlimJoe = null;
+		}
+		if (fontBigJohn!=null) {
+			fontBigJohn.unload();
+			fontBigJohn = null;
 		}
 	}
 }
