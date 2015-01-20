@@ -2,21 +2,46 @@
 <resources>
 
     <string name="app_name">Test Game</string>
+    <string name="app_id">781629512249</string>
     <string name="act_main">MainActivity</string>
     <string name="act_stats">StatsActivity</string>
-    <string name="act_options">OptionsActivity</string>
     
     <!-- MainActivity -->
     <string name="act_main_title"> Test </string>
-    <string name="btn_start"> Start </string>
-    <string name="btn_options"> Options </string>
+     <string name="btn_start"> Start </string>
+    <string name="btn_sound"> Sound </string>
     <string name="btn_stats"> Stats </string>
+    <string name="btn_info"> Info </string>
+    <string name="btn_game_services"> Google Game Services </string>
     
     <!-- StatsActivity -->
     <string name="act_stats_title"> Stats </string>
+    <string name="btn_menu"> Menu </string>
+    <string name="txt_level1"> Level 1 </string>
+    <string name="txt_level1_value"> 0 </string>
+    <string name="txt_games_title"> Played games </string>
+    <string name="txt_games_value"> 0 </string>
     
-    <!-- OptionsActivity -->
-    <string name="act_options_title"> Options </string>
+    <!-- Google Games Achievements -->
+	<string name="sign_in">Sign in with Google</string>
+	<string name="sign_out">Sign out</string>
+	<string name="you_are_signed_in">You are signed in with Google.</string>
+    <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
+    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+	<string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
+    
+    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
+    <string name="show_achievements">Show Achievements</string>
+    <string name="show_leaderboards">Show Leaderboards</string>
 
+	<string name="achievement">Achievement</string>
+    <string name="achievement_prime_toast_text">Prime score!</string>
+    <string name="achievement_halfway_toast_text"> Halfway! (Reach 50%)</string>
+    <string name="achievement_leet_toast_text">L33t! (got 1337 score)</string>
+    <string name="achievement_bored_toast_text"> Played 10 times!</string>
+    <string name="achievement_really_bored_toast_text">Addicted? (Played 100 times)</string>
+    
+    
 
 </resources>

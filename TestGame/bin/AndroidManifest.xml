@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ferron.testgame"
+    package="nl.ferron.saan"
     android:versionCode="1"
     android:versionName="1.0" >
     
@@ -15,9 +15,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                
+        <meta-data android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/app_id" />
+        <meta-data android:name="com.google.android.gms.version"
+                   android:value="@integer/google_play_services_version"/>
                
         <activity
-            android:name="ferron.testgame.MainActivity"
+            android:name="nl.ferron.saan.SplashScreenActivity"
             android:label="@string/app_name" 
             android:screenOrientation="sensorLandscape"
    			android:configChanges="orientation|keyboardHidden">
@@ -29,23 +34,19 @@
         </activity>
         
         <activity
-            android:name="ferron.testgame.GameActivity"
-            android:label="@string/app_name" >
-        </activity>
+            android:name="nl.ferron.saan.MainActivity"
+            android:label="@string/act_main" 
+            android:screenOrientation="sensorLandscape"
+   			android:configChanges="orientation|keyboardHidden" />
         
         <activity
-            android:name="ferron.testgame.StatsActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-   			android:configChanges="orientation|keyboardHidden" >
-        </activity>
-        <activity
-            android:name="ferron.testgame.OptionsActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-   			android:configChanges="orientation|keyboardHidden" >
-        </activity>
+            android:name="nl.ferron.saan.GameActivity"
+            android:label="@string/app_name" />
         
+        <activity
+            android:name="nl.ferron.saan.StatsActivity"
+            android:label="@string/act_stats"
+            android:screenOrientation="sensorLandscape"
+   			android:configChanges="orientation|keyboardHidden" />
     </application>
-
 </manifest>
