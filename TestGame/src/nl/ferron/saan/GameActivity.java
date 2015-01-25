@@ -97,6 +97,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	// Game Scene variables
 	private Scene mGameScene;
+	private int mId;
 	private HUD mGameHud = new HUD();
 	private HUD layer = new HUD();
 	public static Player mPlayer;
@@ -125,18 +126,12 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
     // Are we currently resolving a connection failure?
     private boolean mResolvingConnectionFailure = false;
 
-    // Has the user clicked the sign-in button?
-    private boolean mSignInClicked = false;
-
-    // Automatically start the sign-in flow when the Activity starts
-    private boolean mAutoStartSignInFlow = true;
-
     // request codes we use when invoking an external activity
     private static final int RC_RESOLVE = 5000;
     private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
     
-    private static String TAG = "TESTGAME";
+    private static String TAG = "GameActivity";
 
 
 	// ====================================================
@@ -183,8 +178,13 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// ====================================================
 	@Override
 	protected void onCreateResources()  {
+		//mId = getIntent().getExtras().getInt("level");
+		mId = 2;
+        Log.i("ID", mId+"");
+		
 		// Setup the ResourceManager
-		ResourceManager.getInstance().setup(this.getEngine(), GameActivity.this, mCameraWidth, mCameraHeight, mCameraWidth/DESIGN_SCREEN_WIDTH_PIXELS, mCameraHeight/DESIGN_SCREEN_HEIGHT_PIXELS);
+		ResourceManager.getInstance().setup(this.getEngine(), GameActivity.this, mId, mCameraWidth, mCameraHeight, mCameraWidth/DESIGN_SCREEN_WIDTH_PIXELS, mCameraHeight/DESIGN_SCREEN_HEIGHT_PIXELS);
+		UserDataManager.getInstance().setup(GameActivity.this);
 		
 		 // Create the Google API Client with access to Plus and Games
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -193,7 +193,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
                 .addApi(Plus.API).addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
-        mGoogleApiClient.connect();
+        
+        
 	}
 
 
@@ -216,7 +217,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		// Create HUD, PhysicsWorld and load the level
 		createHUD();
 		createPhysics();
-		loadLevel(2);
+		loadLevel(mId);
 		
 		// Set the HUD to the camera
 		mCamera.setHUD(mGameHud);
@@ -297,7 +298,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Layer
 				if (!UserDataManager.getInstance().isSoundMuted()) {
-					ResourceManager.onClickSound.play();
 					ResourceManager.gameMusic.pause();
 				}
 				showLayer(0);
@@ -364,8 +364,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 						public void onDie()	{
 							if (!mPlayer.isIgnoreUpdate()) {
 								mCamera.setChaseEntity(null);
-								
-								UserDataManager.getInstance().increaseNumberOfGames();
 								
 								if (!UserDataManager.getInstance().isSoundMuted()) {
 									ResourceManager.gameMusic.pause();	
@@ -472,15 +470,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					// BOX					
 					if (x2.getBody().getUserData().equals("player") && x1.getBody().getUserData().equals("box")) {
 						float x = x1.getBody().getPosition().x;
-//						Log.i("CONTACT EVENT", "PLAYER X " + x2.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "BOX X " + x1.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "PLAYER Y " + x2.getBody().getPosition().y);
-//						Log.i("CONTACT EVENT", "BOX Y " + x1.getBody().getPosition().y);
-						
 						int err = (int) (1 + (x1.getBody().getPosition().y/15.5f));
-//						Log.i("ERROR MARGIN", err+"");
-//						Log.i("BOUND", x-err+"");
-//						Log.i("TAG", (x1.getBody().getPosition().y > x2.getBody().getPosition().y) +"");
 						if ((x - err) > x2.getBody().getPosition().x || x1.getBody().getPosition().y > x2.getBody().getPosition().y) {
 							mPlayer.onDie();
 						}
@@ -488,15 +478,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					
 					if (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("box")) {
 						float x = x2.getBody().getPosition().x;
-//						Log.i("CONTACT EVENT", "PLAYER X " + x1.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "BOX X " + x2.getBody().getPosition().x);
-//						Log.i("CONTACT EVENT", "PLAYER Y " + x1.getBody().getPosition().y);
-//						Log.i("CONTACT EVENT", "BOX Y " + x2.getBody().getPosition().y);
-					
 						float err = 1 + (x2.getBody().getPosition().y/15.5f);
-//						Log.i("ERROR MARGIN", err+"");
-//						Log.i("BOUND", x-err+"");
-//						Log.i("TAG", (x2.getBody().getPosition().y > x1.getBody().getPosition().y) +"");
 						if ((x - err) > x1.getBody().getPosition().x || x2.getBody().getPosition().y > x1.getBody().getPosition().y) {
 							mPlayer.onDie();
 						}
@@ -563,8 +545,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	/**
 	 * Create a particleSystem to simulate explosion
-	 * @param particleSpawnCenterX
-	 * @param particleSpawnCenterY
+	 * @param particleSpawnCenterX x position of particle system
+	 * @param particleSpawnCenterY y position of particle system
 	 */
 	private void explode(int particleSpawnCenterX, int particleSpawnCenterY) {
 		// Create Particle emitter
@@ -587,19 +569,21 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		mGameScene.attachChild(particleSystem);
 	}
 	
+	/**
+	 * Convert player x position to percentage and check for achievements and highscores
+	 * @param posX x position of player
+	 * @return return string to display in layer
+	 */
 	private String calculateScore(int posX) {
 		float score = Math.min(100, 100 * ((float) posX/ (float)mScore));
 		
-		// Save Highscore
-		if (score > UserDataManager.getInstance().getMaxScore()) {
-			UserDataManager.getInstance().setMaxScore(score);
-		}
-		
-		// TODO Achievements
-		Log.i("CONNECTED?", MainActivity.isSignedIn()+"");
+		// Check if any Achievements need to be unlocked
 		pushAccomplishments(GameActivity.this, (int) score);
-		//MainActivity.checkForAchievements(GameActivity.this, (int) score);
-		//MainActivity.pushAccomplishments(GameActivity.this);
+		
+		// Save highscore local 
+		if (score > UserDataManager.getInstance().getMaxScore(mId)) {
+			UserDataManager.getInstance().setMaxScore(mId, score);
+		}
 		
 		String scoreString = "You reached \n" + String.format("%.2f", score)  + "%";
 		return scoreString;
@@ -680,7 +664,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Main Menu.
-				ResourceManager.onClickSound.play();
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(GameActivity.this, MainActivity.class);
 			    startActivity(intent);
@@ -705,10 +688,10 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				// Play the click sound and show the Main Menu.
-				ResourceManager.onClickSound.play();
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(GameActivity.this, GameActivity.class);
-			    startActivity(intent);
+				intent.putExtra("level", mId);
+				startActivity(intent);
 			    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 			    finish();
 			}});
@@ -735,7 +718,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);
 					if (!UserDataManager.getInstance().isSoundMuted()) {
-						ResourceManager.onClickSound.play();
 						ResourceManager.gameMusic.play();
 					}
 				}});
@@ -753,8 +735,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	@Override
 	public void onResumeGame(){
 		super.onResumeGame();
-		Log.d(TAG, "onResumeGame(): connecting");
-        if (!isSignedIn()) {
+        if (!isSignedIn() &! MainActivity.mSignInFailed &! MainActivity.mSignOutClicked) {
+        	Log.d(TAG, "onResumeGame(): connecting");
         	mGoogleApiClient.connect();
         }
 	}
@@ -769,8 +751,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			showLayer(0);
 		}
 		
-        Log.d(TAG, "onPauseGame(): disconnecting");
         if (mGoogleApiClient.isConnected()) {
+        	Log.d(TAG, "onPauseGame(): disconnecting");
             mGoogleApiClient.disconnect();
         }
 		super.onPauseGame();
@@ -784,46 +766,70 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	 * Check if someone is signed in to google services
 	 * @return boolean
 	 */
-	public static boolean isSignedIn() {
+	private boolean isSignedIn() {
 		return (mGoogleApiClient != null && mGoogleApiClient.isConnected());
 	}
 	
 	/**
      * Check for achievements and unlock the appropriate ones.
      *
-     * @param c	context of the activity where to show the achievement unlock
-     * @param score the percentage of the level that is cleared.
+     * @param c	activity context
+     * @param score the percentage of the level that is cleared
      */
-	public static void pushAccomplishments(Context c, int score) {
+	private void pushAccomplishments(Context c, int score) {
     	Log.i(TAG, "checkForAchievements");
-        if (!isSignedIn()) {
-            // can't push to the cloud, so save locally
-            //mOutbox.saveLocal(c);
-            return;
-        } else {
-		    if (isPrime(score)) {
-		        Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_prime));
+        if (isSignedIn()) {
+        	// Check for achievements
+        	
+        	// Level specific
+        	if (mId == 1) {
+			    if (score > 50) {
+			        Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_halfway_level_1));
+			    }
+			    if (score == 100) {
+			    	Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_completed_level_1));
+			    }
+			    
+			    // Push score to leaderbords
+			    Games.Leaderboards.submitScore(mGoogleApiClient, getString(R.string.leaderboard_level_1),
+	                    score);
+        	}
+        	else if (mId == 2) {
+        		if (score > 50) {
+			        Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_halfway_level_2));
+			    }
+			    if (score == 100) {
+			    	Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_completed_level_2));
+			    }
+			    
+			    // Push score to leaderbords
+			    Games.Leaderboards.submitScore(mGoogleApiClient, getString(R.string.leaderboard_level_2),
+	                    score);
+        	}
+		
+        	// Global achievements
+        	if (isPrime(score)) {
+		    	Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_prime));
 		    }
-		    if (score > 0) {
-		    	Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_die));
-		    }
-		    if (score > 50) {
-		        Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_halfway));
-		    }
+
 		    if (score == 66) {
 		        Games.Achievements.unlock(mGoogleApiClient, c.getString(R.string.achievement_omg_u_r_teh_uber_leet));
 		    }
-		
-		    Games.Achievements.increment(mGoogleApiClient, c.getString(R.string.achievement_or_addicted),
-		                1);
+        	
+		    // Games Played +1
+		    Games.Achievements.increment(mGoogleApiClient, c.getString(R.string.achievement_or_addicted), 1);
 		       
-		    Games.Achievements.increment(mGoogleApiClient, c.getString(R.string.achievement_bored),
-		                1);
+		    Games.Achievements.increment(mGoogleApiClient, c.getString(R.string.achievement_bored), 1);
+		    		    
         }
     }
 
-    // Checks if int is prime or not.
-    private static boolean isPrime(int n) {
+   /**
+    * Check if integer is prime
+    * @param n integer
+    * @return true if prime, false otherwise
+    */
+    private boolean isPrime(int n) {
         int i;
         for (i = 2; i <= n / 2; i++) {
             if (n % i == 0) {
@@ -834,10 +840,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
     }
 
     
-	
-	/* (non-Javadoc)
-	 * @see com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener#onConnectionFailed(com.google.android.gms.common.ConnectionResult)
-	 */
 	@Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed(): attempting to resolve");
@@ -846,45 +848,22 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             return;
         }
 
-        if (mSignInClicked || mAutoStartSignInFlow) {
-            mAutoStartSignInFlow = false;
-            mSignInClicked = false;
-            mResolvingConnectionFailure = true;
-            if (!BaseGameUtils.resolveConnectionFailure(this, mGoogleApiClient, connectionResult,
-                    RC_SIGN_IN, getString(R.string.signin_other_error))) {
-                mResolvingConnectionFailure = false;
-            }
+        mResolvingConnectionFailure = true;
+        if (!BaseGameUtils.resolveConnectionFailure(this, mGoogleApiClient, connectionResult,
+                RC_SIGN_IN, getString(R.string.signin_other_error))) {
+            mResolvingConnectionFailure = false;
         }
-
-        // Sign-in failed, so show sign-in button on main menu
-        // TODO
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks#onConnected(android.os.Bundle)
-	 */
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		Log.d(TAG, "onConnected(): connected to Google APIs");
-        // Show sign-out button on main menu
-        // TODO
-
-        // Show "you are signed in" message on win screen, with no sign in button.
-        // TODO
-		
+		Log.d(TAG, "onConnected(): connected to Google APIs");		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks#onConnectionSuspended(int)
-	 */
 	@Override
 	public void onConnectionSuspended(int cause) {
 		Log.d(TAG, "onConnectionSuspended(): attempting to connect");
 		mGoogleApiClient.connect();
-		
 	}
-
-
 
 }

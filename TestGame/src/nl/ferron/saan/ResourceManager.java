@@ -39,6 +39,7 @@ public class ResourceManager extends Object {
 	// easy accessibility across our project.
 	public Engine engine;
 	public Context context;
+	public int levelId;
 	public float cameraWidth;
 	public float cameraHeight;
 	public float cameraScaleFactorX;
@@ -64,7 +65,6 @@ public class ResourceManager extends Object {
 	
 	public static Music gameMusic;
 	public static Music onVictorySound;
-	public static Sound onClickSound;
 	public static Sound onDieSound;
 	
 	public static Font fontDefault32Bold;
@@ -93,9 +93,10 @@ public class ResourceManager extends Object {
 	// PUBLIC METHODS
 	//====================================================
 	// Setup the ResourceManager
-	public void setup(final Engine pEngine, final Context pContext, final float pCameraWidth, final float pCameraHeight, final float pCameraScaleX, final float pCameraScaleY){
+	public void setup(final Engine pEngine, final Context pContext, int id, final float pCameraWidth, final float pCameraHeight, final float pCameraScaleX, final float pCameraScaleY){
 		engine = pEngine;
 		context = pContext;
+		levelId = id;
 		cameraWidth = pCameraWidth;
 		cameraHeight = pCameraHeight;
 		cameraScaleFactorX = pCameraScaleX;
@@ -185,7 +186,7 @@ public class ResourceManager extends Object {
 		
 		if (player_region == null) {
 			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 384, 256, TextureOptions.BILINEAR);
-			player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "test.png", 12, 8);
+			player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "player.png", 12, 8);
 	        try {
 				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 				texture.load();
@@ -372,13 +373,6 @@ public class ResourceManager extends Object {
 	// =========================== LOAD SOUNDS ======================== //
 	private void loadSounds(){
 		SoundFactory.setAssetBasePath("sfx/");
-		if (onClickSound==null) {
-			try {
-				onClickSound = SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "click.mp3");
-			} catch (final IOException e) {
-				Log.v("Sounds Load","Exception:" + e.getMessage());
-			}
-		}
 		if (onDieSound==null) {
 			try {
 				onDieSound	= SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "die.wav");
@@ -388,11 +382,22 @@ public class ResourceManager extends Object {
 		}
 	
 		MusicFactory.setAssetBasePath("sfx/");
-		if (gameMusic==null) {
-			try {
-				gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "vanguard2.mp3");
-			} catch (final IOException e) {
-				Log.e("Music Load","Exception:" + e.getMessage());
+		if (levelId == 1) {
+			if (gameMusic==null) {
+				try {
+					gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "vanguard.mp3");
+				} catch (final IOException e) {
+					Log.e("Music Load","Exception:" + e.getMessage());
+				}
+			}
+		} 
+		if (levelId == 2) {
+			if (gameMusic==null) {
+				try {
+					gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "monarchy.mp3");
+				} catch (final IOException e) {
+					Log.e("Music Load","Exception:" + e.getMessage());
+				}
 			}
 		}
 		if (onVictorySound==null) {
@@ -406,13 +411,6 @@ public class ResourceManager extends Object {
 	// =========================== UNLOAD SOUNDS ====================== //
 	// Unload the sounds and music and make sure to stop it first
 	private void unloadSounds(){
-		if (onClickSound!=null) {
-			if (onClickSound.isLoaded()) {
-				onClickSound.stop();
-				engine.getSoundManager().remove(onClickSound);
-				onClickSound = null;
-			}
-		}
 		if (onDieSound!=null) {
 			if (onDieSound.isLoaded()) {
 				onDieSound.stop();

@@ -15,6 +15,7 @@ public final class R {
         public static final int abc_slide_in_top=0x7f040003;
         public static final int abc_slide_out_bottom=0x7f040004;
         public static final int abc_slide_out_top=0x7f040005;
+        public static final int tween=0x7f040006;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -1489,62 +1490,76 @@ containing a value of this type.
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
         public static final int background=0x7f020057;
-        public static final int btn_game_services=0x7f020058;
-        public static final int btn_info=0x7f020059;
-        public static final int btn_menu=0x7f02005a;
-        public static final int btn_sound_off=0x7f02005b;
-        public static final int btn_sound_on=0x7f02005c;
-        public static final int btn_start=0x7f02005d;
-        public static final int btn_stats=0x7f02005e;
-        public static final int common_full_open_on_phone=0x7f02005f;
-        public static final int common_ic_googleplayservices=0x7f020060;
-        public static final int common_signin_btn_icon_dark=0x7f020061;
-        public static final int common_signin_btn_icon_disabled_dark=0x7f020062;
-        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020063;
-        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020064;
-        public static final int common_signin_btn_icon_disabled_light=0x7f020065;
-        public static final int common_signin_btn_icon_focus_dark=0x7f020066;
-        public static final int common_signin_btn_icon_focus_light=0x7f020067;
-        public static final int common_signin_btn_icon_light=0x7f020068;
-        public static final int common_signin_btn_icon_normal_dark=0x7f020069;
-        public static final int common_signin_btn_icon_normal_light=0x7f02006a;
-        public static final int common_signin_btn_icon_pressed_dark=0x7f02006b;
-        public static final int common_signin_btn_icon_pressed_light=0x7f02006c;
-        public static final int common_signin_btn_text_dark=0x7f02006d;
-        public static final int common_signin_btn_text_disabled_dark=0x7f02006e;
-        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02006f;
-        public static final int common_signin_btn_text_disabled_focus_light=0x7f020070;
-        public static final int common_signin_btn_text_disabled_light=0x7f020071;
-        public static final int common_signin_btn_text_focus_dark=0x7f020072;
-        public static final int common_signin_btn_text_focus_light=0x7f020073;
-        public static final int common_signin_btn_text_light=0x7f020074;
-        public static final int common_signin_btn_text_normal_dark=0x7f020075;
-        public static final int common_signin_btn_text_normal_light=0x7f020076;
-        public static final int common_signin_btn_text_pressed_dark=0x7f020077;
-        public static final int common_signin_btn_text_pressed_light=0x7f020078;
-        public static final int games_controller=0x7f020079;
-        public static final int games_controller_pressed=0x7f02007a;
-        public static final int ic_launcher=0x7f02007b;
-        public static final int ic_plusone_medium_off_client=0x7f02007c;
-        public static final int ic_plusone_small_off_client=0x7f02007d;
-        public static final int ic_plusone_standard_off_client=0x7f02007e;
-        public static final int ic_plusone_tall_off_client=0x7f02007f;
-        public static final int info_normal=0x7f020080;
-        public static final int info_pressed=0x7f020081;
-        public static final int menu_normal=0x7f020082;
-        public static final int menu_pressed=0x7f020083;
-        public static final int options_normal=0x7f020084;
-        public static final int options_pressed=0x7f020085;
-        public static final int powered_by_google_dark=0x7f020086;
-        public static final int powered_by_google_light=0x7f020087;
-        public static final int sound_off_normal=0x7f020088;
-        public static final int sound_off_pressed=0x7f020089;
-        public static final int sound_on_normal=0x7f02008a;
-        public static final int sound_on_pressed=0x7f02008b;
-        public static final int start_normal=0x7f02008c;
-        public static final int start_pressed=0x7f02008d;
-        public static final int stats_normal=0x7f02008e;
-        public static final int stats_pressed=0x7f02008f;
+        public static final int btn_achievements=0x7f020058;
+        public static final int btn_game_services=0x7f020059;
+        public static final int btn_info=0x7f02005a;
+        public static final int btn_leaderboards=0x7f02005b;
+        public static final int btn_menu=0x7f02005c;
+        public static final int btn_sound_off=0x7f02005d;
+        public static final int btn_sound_on=0x7f02005e;
+        public static final int btn_start=0x7f02005f;
+        public static final int btn_stats=0x7f020060;
+        public static final int common_full_open_on_phone=0x7f020061;
+        public static final int common_ic_googleplayservices=0x7f020062;
+        public static final int common_signin_btn_icon_dark=0x7f020063;
+        public static final int common_signin_btn_icon_disabled_dark=0x7f020064;
+        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f020065;
+        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020066;
+        public static final int common_signin_btn_icon_disabled_light=0x7f020067;
+        public static final int common_signin_btn_icon_focus_dark=0x7f020068;
+        public static final int common_signin_btn_icon_focus_light=0x7f020069;
+        public static final int common_signin_btn_icon_light=0x7f02006a;
+        public static final int common_signin_btn_icon_normal_dark=0x7f02006b;
+        public static final int common_signin_btn_icon_normal_light=0x7f02006c;
+        public static final int common_signin_btn_icon_pressed_dark=0x7f02006d;
+        public static final int common_signin_btn_icon_pressed_light=0x7f02006e;
+        public static final int common_signin_btn_text_dark=0x7f02006f;
+        public static final int common_signin_btn_text_disabled_dark=0x7f020070;
+        public static final int common_signin_btn_text_disabled_focus_dark=0x7f020071;
+        public static final int common_signin_btn_text_disabled_focus_light=0x7f020072;
+        public static final int common_signin_btn_text_disabled_light=0x7f020073;
+        public static final int common_signin_btn_text_focus_dark=0x7f020074;
+        public static final int common_signin_btn_text_focus_light=0x7f020075;
+        public static final int common_signin_btn_text_light=0x7f020076;
+        public static final int common_signin_btn_text_normal_dark=0x7f020077;
+        public static final int common_signin_btn_text_normal_light=0x7f020078;
+        public static final int common_signin_btn_text_pressed_dark=0x7f020079;
+        public static final int common_signin_btn_text_pressed_light=0x7f02007a;
+        public static final int games_achievements_normal=0x7f02007b;
+        public static final int games_achievements_pressed=0x7f02007c;
+        public static final int games_controller=0x7f02007d;
+        public static final int games_controller_pressed=0x7f02007e;
+        public static final int games_leaderboards_normal=0x7f02007f;
+        public static final int games_leaderboards_pressed=0x7f020080;
+        public static final int ic_launcher=0x7f020081;
+        public static final int ic_plusone_medium_off_client=0x7f020082;
+        public static final int ic_plusone_small_off_client=0x7f020083;
+        public static final int ic_plusone_standard_off_client=0x7f020084;
+        public static final int ic_plusone_tall_off_client=0x7f020085;
+        public static final int info_normal=0x7f020086;
+        public static final int info_pressed=0x7f020087;
+        public static final int level1_completed=0x7f020088;
+        public static final int level1_not_completed=0x7f020089;
+        public static final int level2_completed=0x7f02008a;
+        public static final int level2_not_completed=0x7f02008b;
+        public static final int level3_completed=0x7f02008c;
+        public static final int level3_not_completed=0x7f02008d;
+        public static final int level_locked=0x7f02008e;
+        public static final int logo=0x7f02008f;
+        public static final int menu_normal=0x7f020090;
+        public static final int menu_pressed=0x7f020091;
+        public static final int options_normal=0x7f020092;
+        public static final int options_pressed=0x7f020093;
+        public static final int powered_by_google_dark=0x7f020094;
+        public static final int powered_by_google_light=0x7f020095;
+        public static final int sound_off_normal=0x7f020096;
+        public static final int sound_off_pressed=0x7f020097;
+        public static final int sound_on_normal=0x7f020098;
+        public static final int sound_on_pressed=0x7f020099;
+        public static final int start_normal=0x7f02009a;
+        public static final int start_pressed=0x7f02009b;
+        public static final int stats_normal=0x7f02009c;
+        public static final int stats_pressed=0x7f02009d;
     }
     public static final class id {
         public static final int action_bar=0x7f060031;
@@ -1564,12 +1579,12 @@ containing a value of this type.
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
         public static final int book_now=0x7f06002a;
-        public static final int btn_game_services=0x7f060056;
-        public static final int btn_info=0x7f060055;
-        public static final int btn_menu=0x7f06005b;
-        public static final int btn_sound=0x7f060052;
-        public static final int btn_start=0x7f060053;
-        public static final int btn_stats=0x7f060054;
+        public static final int btn_achievements=0x7f06005f;
+        public static final int btn_game_services=0x7f06005c;
+        public static final int btn_info=0x7f06005b;
+        public static final int btn_leaderboards=0x7f060060;
+        public static final int btn_menu=0x7f060064;
+        public static final int btn_sound=0x7f06005a;
         public static final int buyButton=0x7f060024;
         public static final int buy_now=0x7f060029;
         public static final int buy_with_google=0x7f060028;
@@ -1578,6 +1593,12 @@ containing a value of this type.
         public static final int collapseActionView=0x7f06000d;
         public static final int default_activity_button=0x7f06003d;
         public static final int dialog=0x7f06000e;
+        public static final int dialog2_btn_menu=0x7f06006a;
+        public static final int dialog2_btn_stats=0x7f06006b;
+        public static final int dialog2_text=0x7f060069;
+        public static final int dialog_btn_image=0x7f06006d;
+        public static final int dialog_btn_menu=0x7f06006c;
+        public static final int dialog_text=0x7f06006e;
         public static final int disableHome=0x7f060008;
         public static final int donate_with_google=0x7f06002b;
         public static final int dropdown=0x7f06000f;
@@ -1594,6 +1615,10 @@ containing a value of this type.
         public static final int icon=0x7f06003f;
         public static final int ifRoom=0x7f06000a;
         public static final int image=0x7f06003c;
+        public static final int imageView1=0x7f060058;
+        public static final int img_lvl1=0x7f060053;
+        public static final int img_lvl2=0x7f060055;
+        public static final int img_lvl3=0x7f060057;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f06003e;
         public static final int match_parent=0x7f060026;
@@ -1630,16 +1655,22 @@ containing a value of this type.
         public static final int terrain=0x7f06001d;
         public static final int title=0x7f060040;
         public static final int top_action_bar=0x7f060035;
-        public static final int txt_gamesTitle=0x7f06005d;
-        public static final int txt_games_value=0x7f06005e;
-        public static final int txt_level1=0x7f06005a;
-        public static final int txt_level1_value=0x7f06005c;
-        public static final int txt_player=0x7f060057;
-        public static final int txt_title_main=0x7f060051;
-        public static final int txt_title_splash=0x7f060058;
-        public static final int txt_title_stats=0x7f060059;
+        public static final int txt_level1=0x7f060063;
+        public static final int txt_level1_value=0x7f060065;
+        public static final int txt_level2=0x7f060066;
+        public static final int txt_level2_value=0x7f060067;
+        public static final int txt_lvl1=0x7f060052;
+        public static final int txt_lvl2=0x7f060054;
+        public static final int txt_lvl3=0x7f060056;
+        public static final int txt_player=0x7f06005d;
+        public static final int txt_should_sign_in=0x7f060068;
+        public static final int txt_start=0x7f06005e;
+        public static final int txt_title_main=0x7f060059;
+        public static final int txt_title_splash=0x7f060061;
+        public static final int txt_title_stats=0x7f060062;
         public static final int up=0x7f060036;
         public static final int useLogo=0x7f060003;
+        public static final int viewflipper=0x7f060051;
         public static final int withText=0x7f06000c;
         public static final int wrap_content=0x7f060027;
     }
@@ -1694,13 +1725,18 @@ containing a value of this type.
         public static final int abc_search_dropdown_item_icons_2line=0x7f030015;
         public static final int abc_search_view=0x7f030016;
         public static final int abc_simple_decor=0x7f030017;
-        public static final int act_main=0x7f030018;
-        public static final int act_splash=0x7f030019;
-        public static final int act_stats=0x7f03001a;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
+        public static final int act_level_selector=0x7f030018;
+        public static final int act_main=0x7f030019;
+        public static final int act_splash=0x7f03001a;
+        public static final int act_stats=0x7f03001b;
+        public static final int dialog_error=0x7f03001c;
+        public static final int dialog_info=0x7f03001d;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001e;
     }
     public static final class raw {
         public static final int gtm_analytics=0x7f050000;
+        public static final int menu=0x7f050001;
+        public static final int menu2=0x7f050002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1744,41 +1780,36 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
         public static final int accept=0x7f0b000f;
-        public static final int achievement=0x7f0b0059;
-        public static final int achievement_bored=0x7f0b003d;
-        public static final int achievement_bored_toast_text=0x7f0b005d;
-        public static final int achievement_completed=0x7f0b003b;
-        public static final int achievement_die=0x7f0b003f;
-        public static final int achievement_halfway=0x7f0b003a;
-        public static final int achievement_halfway_toast_text=0x7f0b005b;
-        public static final int achievement_leet_toast_text=0x7f0b005c;
-        public static final int achievement_omg_u_r_teh_uber_leet=0x7f0b003c;
-        public static final int achievement_or_addicted=0x7f0b003e;
+        public static final int achievement_bored=0x7f0b003f;
+        public static final int achievement_completed_level_1=0x7f0b003a;
+        public static final int achievement_completed_level_2=0x7f0b003c;
         /**  ACHIEVEMENTS 
          */
-        public static final int achievement_prime=0x7f0b0039;
-        public static final int achievement_prime_toast_text=0x7f0b005a;
-        public static final int achievement_really_bored_toast_text=0x7f0b005e;
-        public static final int achievements_not_available=0x7f0b0055;
-        public static final int act_main=0x7f0b0041;
+        public static final int achievement_halfway_level_1=0x7f0b0039;
+        public static final int achievement_halfway_level_2=0x7f0b003b;
+        public static final int achievement_omg_u_r_teh_uber_leet=0x7f0b003e;
+        public static final int achievement_or_addicted=0x7f0b0040;
+        public static final int achievement_prime=0x7f0b003d;
+        public static final int achievements_not_available=0x7f0b005f;
+        public static final int act_main=0x7f0b0044;
         /**  MainActivity 
          */
-        public static final int act_main_title=0x7f0b0043;
-        public static final int act_stats=0x7f0b0042;
+        public static final int act_main_title=0x7f0b0046;
+        public static final int act_stats=0x7f0b0045;
         /**  StatsActivity 
          */
-        public static final int act_stats_title=0x7f0b0049;
+        public static final int act_stats_title=0x7f0b0053;
         /**  APP ID 
          */
         public static final int app_id=0x7f0b0038;
         public static final int app_misconfigured=0x7f0b0035;
-        public static final int app_name=0x7f0b0040;
-        public static final int btn_game_services=0x7f0b0048;
-        public static final int btn_info=0x7f0b0047;
-        public static final int btn_menu=0x7f0b004a;
-        public static final int btn_sound=0x7f0b0045;
-        public static final int btn_start=0x7f0b0044;
-        public static final int btn_stats=0x7f0b0046;
+        public static final int app_name=0x7f0b0043;
+        public static final int btn_game_services=0x7f0b004b;
+        public static final int btn_info=0x7f0b004a;
+        public static final int btn_menu=0x7f0b0054;
+        public static final int btn_sound=0x7f0b0048;
+        public static final int btn_start=0x7f0b0047;
+        public static final int btn_stats=0x7f0b0049;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
         public static final int common_android_wear_notification_needs_update_text=0x7f0b0016;
@@ -1881,34 +1912,45 @@ containing a value of this type.
         public static final int create_calendar_message=0x7f0b0012;
         public static final int create_calendar_title=0x7f0b0011;
         public static final int decline=0x7f0b0010;
+        public static final int dialog_img=0x7f0b004c;
+        public static final int dialog_txt=0x7f0b004d;
         public static final int gamehelper_app_misconfigured=0x7f0b0031;
         public static final int gamehelper_license_failed=0x7f0b0032;
         public static final int gamehelper_sign_in_failed=0x7f0b0030;
         public static final int gamehelper_unknown_error=0x7f0b0033;
-        public static final int leaderboards_not_available=0x7f0b0056;
-        public static final int license_failed=0x7f0b0036;
-        public static final int show_achievements=0x7f0b0057;
-        public static final int show_leaderboards=0x7f0b0058;
-        /**  Google Games Achievements 
+        /**  LevelSelectorActivity 
          */
-        public static final int sign_in=0x7f0b004f;
+        public static final int img_lvls=0x7f0b004f;
+        public static final int leaderboard_level_1=0x7f0b0041;
+        public static final int leaderboard_level_2=0x7f0b0042;
+        public static final int leaderboards_not_available=0x7f0b0060;
+        public static final int license_failed=0x7f0b0036;
+        public static final int show_achievements=0x7f0b0061;
+        public static final int show_leaderboards=0x7f0b0062;
+        /**  Google Game Services 
+         */
+        public static final int sign_in=0x7f0b005a;
         public static final int sign_in_failed=0x7f0b0034;
-        public static final int sign_in_to_upload_this_score=0x7f0b0052;
-        public static final int sign_out=0x7f0b0050;
-        public static final int signin_other_error=0x7f0b0053;
+        public static final int sign_in_to_upload_this_score=0x7f0b005d;
+        public static final int sign_out=0x7f0b005b;
+        public static final int signin_other_error=0x7f0b005e;
         public static final int store_picture_message=0x7f0b000e;
         public static final int store_picture_title=0x7f0b000d;
-        public static final int txt_games_title=0x7f0b004d;
-        public static final int txt_games_value=0x7f0b004e;
-        public static final int txt_level1=0x7f0b004b;
-        public static final int txt_level1_value=0x7f0b004c;
+        public static final int txt_level1=0x7f0b0055;
+        public static final int txt_level1_value=0x7f0b0056;
+        public static final int txt_level2=0x7f0b0057;
+        public static final int txt_level2_value=0x7f0b0058;
+        public static final int txt_lvl1=0x7f0b0050;
+        public static final int txt_lvl2=0x7f0b0051;
+        public static final int txt_lvl3=0x7f0b0052;
+        public static final int txt_should_sign_in=0x7f0b0059;
+        public static final int txt_start=0x7f0b004e;
         public static final int unknown_error=0x7f0b0037;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
         public static final int wallet_buy_button_place_holder=0x7f0b002f;
-        public static final int you_are_signed_in=0x7f0b0051;
-        public static final int your_progress_will_be_uploaded=0x7f0b0054;
+        public static final int you_are_signed_in=0x7f0b005c;
     }
     public static final class style {
         /** 

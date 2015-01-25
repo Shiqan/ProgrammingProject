@@ -4,7 +4,13 @@
     android:versionCode="1"
     android:versionName="1.0" >
     
-    <!--  Aero Chord - Surface ... game music!!? -->
+    <!--  New level music?
+    Aero Chord - Surface 
+    Slander - New Monarchy
+    Nitro Fun - Cheat Codes
+    Rootkit - Do It
+    -->
+    
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -26,11 +32,7 @@
             android:label="@string/app_name" 
             android:screenOrientation="sensorLandscape"
    			android:configChanges="orientation|keyboardHidden">
-			<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+			
         </activity>
         
         <activity
@@ -41,7 +43,20 @@
         
         <activity
             android:name="nl.ferron.saan.GameActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name" >
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            </activity>
+        
+        <activity
+            android:name="nl.ferron.saan.LevelSelectorActivity"
+            android:label="@string/act_stats"
+            android:screenOrientation="sensorLandscape"
+   			android:configChanges="orientation|keyboardHidden" />
         
         <activity
             android:name="nl.ferron.saan.StatsActivity"

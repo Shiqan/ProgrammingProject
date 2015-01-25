@@ -19,11 +19,14 @@
     <string name="app_id">781629512249</string>
 
     <!-- ACHIEVEMENTS -->
-    <string name="achievement_prime">CgkIubT_5d8WEAIQAQ</string>
-	<string name="achievement_halfway">CgkIubT_5d8WEAIQAg</string>
-	<string name="achievement_completed">CgkIubT_5d8WEAIQCQ</string>
+    <string name="achievement_halfway_level_1">CgkIubT_5d8WEAIQAg</string>
+	<string name="achievement_completed_level_1">CgkIubT_5d8WEAIQCQ</string>
+	<string name="achievement_halfway_level_2">CgkIubT_5d8WEAIQDg</string>
+	<string name="achievement_completed_level_2">CgkIubT_5d8WEAIQDQ</string>
+	<string name="achievement_prime">CgkIubT_5d8WEAIQAQ</string>
 	<string name="achievement_omg_u_r_teh_uber_leet">CgkIubT_5d8WEAIQAw</string>
 	<string name="achievement_bored">CgkIubT_5d8WEAIQBw</string>
 	<string name="achievement_or_addicted">CgkIubT_5d8WEAIQCA</string>
-	<string name="achievement_die">CgkIubT_5d8WEAIQCg</string>
+	<string name="leaderboard_level_1">CgkIubT_5d8WEAIQCw</string>
+	<string name="leaderboard_level_2">CgkIubT_5d8WEAIQDA</string>
 </resources>

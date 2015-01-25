@@ -23,21 +23,25 @@ public class StatsActivity extends Activity {
         TextView txtTitle = (TextView) findViewById(R.id.txt_title_stats);
 		txtTitle.setTypeface(type);
 		
-		TextView txtLevel = (TextView) findViewById(R.id.txt_level1);
-		txtLevel.setTypeface(type2);
+		TextView txtLevel1 = (TextView) findViewById(R.id.txt_level1);
+		txtLevel1.setTypeface(type2);
 		
-		TextView txtDeaths = (TextView) findViewById(R.id.txt_gamesTitle);
-		txtDeaths.setTypeface(type2);
+		TextView txtLevel2 = (TextView) findViewById(R.id.txt_level2);
+		txtLevel2.setTypeface(type2);
+		
+		TextView txtShouldSignIn = (TextView) findViewById(R.id.txt_should_sign_in);
+		txtShouldSignIn.setTypeface(type2);
 		
 		// Change font and text
-		TextView txtLevelValue = (TextView) findViewById(R.id.txt_level1_value);
-		txtLevelValue.setTypeface(type2);
-		txtLevelValue.setText(UserDataManager.getInstance().getMaxScore()+"%");
+		TextView txtLeve1Value = (TextView) findViewById(R.id.txt_level1_value);
+		txtLeve1Value.setTypeface(type2);
+		txtLeve1Value.setText(UserDataManager.getInstance().getMaxScore(1)+"%");
 
-		TextView txtDeathsValue = (TextView) findViewById(R.id.txt_games_value);
-		txtDeathsValue.setTypeface(type2);
-		txtDeathsValue.setText(UserDataManager.getInstance().getNumberOfGames()+"");
-	   
+		TextView txtLeve2Value = (TextView) findViewById(R.id.txt_level2_value);
+		txtLeve2Value.setTypeface(type2);
+		txtLeve2Value.setText(UserDataManager.getInstance().getMaxScore(2)+"%");
+
+		// Menu button
 	    ImageButton btnMenu = (ImageButton) findViewById(R.id.btn_menu);
 	    btnMenu.setOnClickListener(new OnClickListener() {
 			@Override
