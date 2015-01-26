@@ -1,5 +1,10 @@
 package nl.ferron.saan;
 
+/**
+ * Activity for main menu
+ * @author Ferron
+ */
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -7,7 +12,6 @@ import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,7 +51,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private static final int RC_SIGN_IN = 9001;
     
     private static String TAG = "TESTGAME";
-    private TextView txtPlayer;
+    private TextView mTxtPlayer;
     public static boolean mSignInFailed = false;
     private MediaPlayer mMediaPlayer;
 
@@ -72,9 +76,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 		Typeface type = Typeface.createFromAsset(getAssets(),"fonts/bigjohn.otf");
 		txtTitle.setTypeface(type);
 		
-		txtPlayer = (TextView) findViewById(R.id.txt_player);
+		mTxtPlayer = (TextView) findViewById(R.id.txt_player);
 		final Typeface type2 = Typeface.createFromAsset(getAssets(),"fonts/slimjoe.otf");
-		txtPlayer.setTypeface(type2);
+		mTxtPlayer.setTypeface(type2);
 		
 		TextView txtStart = (TextView) findViewById(R.id.txt_start);
 		txtStart.setTypeface(type2);
@@ -129,7 +133,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 					mGoogleApiClient.disconnect();
 					mSignInClicked = false;
 					mSignOutClicked = true;
-					txtPlayer.setText(MainActivity.this.getString(R.string.sign_in));
+					mTxtPlayer.setText(MainActivity.this.getString(R.string.sign_in));
 				} else {
 					mGoogleApiClient.connect();
 					mSignInClicked = true;
@@ -185,34 +189,17 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 	}
 	
 	@Override
-	public boolean onTouchEvent(MotionEvent event){ 
-	        
-		String DEBUG_TAG = "TOUCHEVENT";
-		
-	    int action = MotionEventCompat.getActionMasked(event);
-	        
-	    switch(action) {
-	        case (MotionEvent.ACTION_DOWN) :
-	            Log.d(DEBUG_TAG,"Action was DOWN");
-	            return true;
-	        case (MotionEvent.ACTION_MOVE) :
-	            Log.d(DEBUG_TAG,"Action was MOVE");
-	            return true;
+	public boolean onTouchEvent(MotionEvent touchevent){ 
+	    switch(touchevent.getAction()) {
 	        case (MotionEvent.ACTION_UP) :
 	        	//Intent intent = new Intent(MainActivity.this, GameActivity.class);
 	        	Intent intent = new Intent(MainActivity.this, LevelSelectorActivity.class);
 				startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-				return true;
-	        case (MotionEvent.ACTION_CANCEL) :
-	            Log.d(DEBUG_TAG,"Action was CANCEL");
-	            return true;
-	        case (MotionEvent.ACTION_OUTSIDE) :
-	            Log.d(DEBUG_TAG,"Movement occurred outside bounds " +
-	                    "of current screen element");
-	            return true;      
+				finish();
+				return true;    
 	        default : 
-	            return super.onTouchEvent(event);
+	            return super.onTouchEvent(touchevent);
 	    }      
 	}
 	
@@ -236,8 +223,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
                     RC_UNUSED);
         } else {
-            //BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
-        	createDialog(getString(R.string.achievements_not_available));
+            createDialog(getString(R.string.achievements_not_available));
         }
     }
     
@@ -249,7 +235,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
                     RC_UNUSED);
         } else {
-            //BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
             createDialog(getString(R.string.leaderboards_not_available));
 			
         }
@@ -310,12 +295,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         Player p = Games.Players.getCurrentPlayer(mGoogleApiClient);
         String displayName;
         if (p == null) {
-            Log.w(TAG, "mGamesClient.getCurrentPlayer() is NULL!");
             displayName = "???";
         } else {
             displayName = p.getDisplayName();
         }
-        txtPlayer.setText("Hello " + displayName);
+        mTxtPlayer.setText("Hello " + displayName);
         mSignInFailed = false;
     }
 
@@ -344,7 +328,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         // Sign-in failed, so show failed message on main menu
-        txtPlayer.setText(getString(R.string.sign_in));
+        mTxtPlayer.setText(getString(R.string.sign_in));
         mSignInFailed = true;
     }
     
@@ -361,8 +345,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     		mMediaPlayer.setLooping(true);
     		mMediaPlayer.start();
 		}
-        
-        
     }
 
     @Override

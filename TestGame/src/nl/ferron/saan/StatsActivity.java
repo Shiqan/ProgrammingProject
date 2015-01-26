@@ -1,5 +1,10 @@
 package nl.ferron.saan;
 
+/**
+ * Activity to show some stats when not connected to Google Game Services
+ * @author Ferron
+ */
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;

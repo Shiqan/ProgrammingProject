@@ -1,5 +1,11 @@
 package nl.ferron.saan;
 
+/**
+ * Class to make a custom animatedsprite for the player object
+ * @author Ferron
+ */
+
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -34,9 +40,7 @@ public abstract class Player extends AnimatedSprite {
 	        public void onUpdate(float pSecondsElapsed) {
 				super.onUpdate(pSecondsElapsed);
 				camera.onUpdate(0.1f);
-				
-				//Log.i("PLAYER", mBody.getPosition().x + "");
-				
+								
 				if (GameActivity.mContinuousTouch) {
 					jump();
 				}
@@ -71,6 +75,6 @@ public abstract class Player extends AnimatedSprite {
 		mFloorContact = false;
 	}
 	
-	// Override onDie in each level for custom deaths per level
+	// Override onDie in levelloader for custom deaths in each level
 	public abstract void onDie();
 }

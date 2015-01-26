@@ -1,5 +1,11 @@
 package nl.ferron.saan;
 
+/**
+ * Class to handle the loading and unloading of all the objects needed for the game
+ * @author Ferron
+ */
+
+
 import java.io.IOException;
 
 import org.andengine.audio.music.Music;

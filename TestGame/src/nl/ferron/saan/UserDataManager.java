@@ -1,15 +1,14 @@
-/**
- * 
- */
 package nl.ferron.saan;
+
+/**
+ * Class to handle the saving and retrieving of data stored in SharedPreferences
+ * @author Ferron
+ */
+
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * @author Ferron
- *
- */
 public class UserDataManager {
 	
 	//====================================================

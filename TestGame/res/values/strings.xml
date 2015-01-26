@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Test Game</string>
+    <string name="app_name"> Jump the Beat</string>
     <string name="app_id">781629512249</string>
     <string name="act_main">MainActivity</string>
     <string name="act_stats">StatsActivity</string>
     
     <!-- MainActivity -->
-    <string name="act_main_title"> Test </string>
+    <string name="act_main_title"> Jump the Beat </string>
      <string name="btn_start"> Start </string>
     <string name="btn_sound"> Sound </string>
     <string name="btn_stats"> Stats </string>

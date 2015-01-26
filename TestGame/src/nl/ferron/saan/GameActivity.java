@@ -178,13 +178,11 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// ====================================================
 	@Override
 	protected void onCreateResources()  {
-		//mId = getIntent().getExtras().getInt("level");
-		mId = 2;
-        Log.i("ID", mId+"");
+		// Get level number
+		mId = getIntent().getExtras().getInt("level");
 		
 		// Setup the ResourceManager
 		ResourceManager.getInstance().setup(this.getEngine(), GameActivity.this, mId, mCameraWidth, mCameraHeight, mCameraWidth/DESIGN_SCREEN_WIDTH_PIXELS, mCameraHeight/DESIGN_SCREEN_HEIGHT_PIXELS);
-		UserDataManager.getInstance().setup(GameActivity.this);
 		
 		 // Create the Google API Client with access to Plus and Games
         mGoogleApiClient = new GoogleApiClient.Builder(this)

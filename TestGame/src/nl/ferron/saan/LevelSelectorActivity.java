@@ -1,12 +1,10 @@
-/**
- * 
- */
 package nl.ferron.saan;
 
 /**
+ * Activity with viewflipper to select a level to play
  * @author Ferron
- *
  */
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -19,14 +17,14 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class LevelSelectorActivity extends Activity {
-	private ViewFlipper viewFlipper;
-    private float lastX;
+	private ViewFlipper mViewFlipper;
+    private float mStartX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.act_level_selector);
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
+        mViewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
         
         // Change font
         TextView txtLevel1 = (TextView) findViewById(R.id.txt_lvl1);
@@ -40,6 +38,7 @@ public class LevelSelectorActivity extends Activity {
 		ImageView imgLevel1 = (ImageView) findViewById(R.id.img_lvl1);
 		ImageView imgLevel2 = (ImageView) findViewById(R.id.img_lvl2);
 		
+		// When level is completed set to color img
 		if (UserDataManager.getInstance().getMaxScore(1) == 100) {
 			imgLevel1.setImageResource(R.drawable.level1_completed);
 		}
@@ -51,7 +50,7 @@ public class LevelSelectorActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				int id = viewFlipper.getDisplayedChild() + 1;
+				int id = mViewFlipper.getDisplayedChild() + 1;
 				Intent intent = new Intent(LevelSelectorActivity.this, GameActivity.class);
 				intent.putExtra("level", id);
 	        	startActivity(intent);
@@ -65,36 +64,39 @@ public class LevelSelectorActivity extends Activity {
 		
     }
 
-    // Handle swipe events
+    /**
+     * Handle swipe events
+     */
     public boolean onTouchEvent(MotionEvent touchevent) {
     	
     	switch (touchevent.getAction()) {
-	        case MotionEvent.ACTION_DOWN: 
-	        	lastX = touchevent.getX();
-	            break;
-	        case MotionEvent.ACTION_UP: 
+	        case (MotionEvent.ACTION_DOWN) : 
+	        	mStartX = touchevent.getX();
+	            return true;
+	        case (MotionEvent.ACTION_UP) : 
 	            float currentX = touchevent.getX();
 	            
 	            // Previous
-	            if (lastX < currentX) {
+	            if (mStartX < currentX) {
 	                            
 	                // Animate transition
-	                viewFlipper.setInAnimation(this, android.R.anim.fade_in);
-	                viewFlipper.setOutAnimation(this, android.R.anim.fade_out);
+	            	mViewFlipper.setInAnimation(this, android.R.anim.fade_in);
+	            	mViewFlipper.setOutAnimation(this, android.R.anim.fade_out);
 	       
-	                viewFlipper.showPrevious();
+	            	mViewFlipper.showPrevious();
 	             }
 	                                     
 	             // Next
-	             if (lastX > currentX) {
+	             if (mStartX > currentX) {
 	            	 // Animate transition
-	            	 viewFlipper.setInAnimation(this, android.R.anim.fade_in);
-	            	 viewFlipper.setOutAnimation(this, android.R.anim.fade_out);
+	            	 mViewFlipper.setInAnimation(this, android.R.anim.fade_in);
+	            	 mViewFlipper.setOutAnimation(this, android.R.anim.fade_out);
 	                 
-	                 viewFlipper.showNext();
+	            	 mViewFlipper.showNext();
 	             }
-	             break;
+	             return true;
+	        default : 
+	            return super.onTouchEvent(touchevent);
     	 }
-         return false;
     }
 }
