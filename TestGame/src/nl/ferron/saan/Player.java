@@ -24,7 +24,7 @@ public abstract class Player extends AnimatedSprite {
 	
 	// Create AnimatedSprite
 	public Player(float pX, float pY, Camera camera, PhysicsWorld physicsWorld) {
-		super(pX, pY, ResourceManager.getInstance().player_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		super(pX, pY, ResourceManager.getInstance().mPlayerRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		createPhysics(camera, physicsWorld);
 		camera.setChaseEntity(this);
 	}

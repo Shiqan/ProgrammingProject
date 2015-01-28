@@ -11,6 +11,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="@string/app_name"
-        android:textSize="72sp" />
+        android:textSize="92sp" />
 
 </RelativeLayout>

@@ -28,7 +28,6 @@ import org.andengine.util.adt.color.Color;
 import org.andengine.util.debug.Debug;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.Log;
 
 public class ResourceManager extends Object {
@@ -43,40 +42,41 @@ public class ResourceManager extends Object {
 	//====================================================
 	// We include these objects in the resource manager for
 	// easy accessibility across our project.
-	public Engine engine;
-	public Context context;
-	public int levelId;
-	public float cameraWidth;
-	public float cameraHeight;
-	public float cameraScaleFactorX;
-	public float cameraScaleFactorY;
+	public Engine mEngine;
+	public Context mContext;
+	public int mLevelId;
+	public float mCameraWidth;
+	public float mCameraHeight;
+	public float mCameraScaleFactorX;
+	public float mCameraScaleFactorY;
 	
 	// The resource variables listed should be kept public, allowing us easy access
 	// to them when creating new Sprite and Text objects and to play sound files.
 	// ======================== Game Resources ================= //
-	public static ITextureRegion gameBackgroundTextureRegion;
-	public static ITextureRegion box_region;
-	public static ITextureRegion floor1_region;
-	public static ITextureRegion floor2_region;
-	public ITiledTextureRegion player_region;
-	public static ITextureRegion complete_region;
+	public BuildableBitmapTextureAtlas mButtonAtlas;
+	public BuildableBitmapTextureAtlas mGameAtlas;
 	
-	public static ITextureRegion hand_region;
-	public static ITextureRegion cling_region;
+	public static ITextureRegion mBackgroundRegion;
+	public static ITextureRegion mBoxRegion;
+	public static ITextureRegion mFloor1Region;
+	public static ITextureRegion mFloor2Region;
+	public ITiledTextureRegion mPlayerRegion;
+	public static ITextureRegion mCompleteRegion;
 	
-	public static ITiledTextureRegion menubuttonTiledTextureRegion;
-	public static ITiledTextureRegion pausebuttonTiledTextureRegion;
-	public static ITiledTextureRegion restartbuttonTiledTextureRegion;
-	public static ITiledTextureRegion resumebuttonTiledTextureRegion;
+	public static ITextureRegion mHandRegion;
+	public static ITextureRegion mClingRegion;
 	
-	public static Music gameMusic;
-	public static Music onVictorySound;
-	public static Sound onDieSound;
+	public static ITiledTextureRegion mMenuButtonRegion;
+	public static ITiledTextureRegion mPauseButtonRegion;
+	public static ITiledTextureRegion mRestartButtonRegion;
+	public static ITiledTextureRegion mResumeButtonRegion;
 	
-	public static Font fontDefault32Bold;
-	public static Font fontDefault72Bold;
-	public static Font fontSlimJoe;
-	public static Font fontBigJohn;
+	public static Music mGameMusic;
+	public static Music mOnVictorySound;
+	public static Sound mOnDieSound;
+	
+	public static Font mFontSlimJoe;
+	public static Font mFontBigJohn;
 	
 	// This variable will be used to revert the TextureFactory's default path when we change it.
 	private String mPreviousAssetBasePath = "";
@@ -100,13 +100,13 @@ public class ResourceManager extends Object {
 	//====================================================
 	// Setup the ResourceManager
 	public void setup(final Engine pEngine, final Context pContext, int id, final float pCameraWidth, final float pCameraHeight, final float pCameraScaleX, final float pCameraScaleY){
-		engine = pEngine;
-		context = pContext;
-		levelId = id;
-		cameraWidth = pCameraWidth;
-		cameraHeight = pCameraHeight;
-		cameraScaleFactorX = pCameraScaleX;
-		cameraScaleFactorY = pCameraScaleY;
+		mEngine = pEngine;
+		mContext = pContext;
+		mLevelId = id;
+		mCameraWidth = pCameraWidth;
+		mCameraHeight = pCameraHeight;
+		mCameraScaleFactorX = pCameraScaleX;
+		mCameraScaleFactorY = pCameraScaleY;
 	}
 	
 	// Loads all game resources
@@ -142,153 +142,41 @@ public class ResourceManager extends Object {
 		// Set our game assets folder to "assets/gfx/game/"
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 
-		// background texture - only load it if we need to:
-		if(gameBackgroundTextureRegion==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 1900, 1090);
-			gameBackgroundTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "background.png");
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
+		mGameAtlas = new BuildableBitmapTextureAtlas(mEngine.getTextureManager(), 1024, 1536);
+		
+		mBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "bg.png");
+		mBoxRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "square.png");
+		mCompleteRegion = mBoxRegion;
+		mFloor1Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "floor1.png");			
+		mFloor2Region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "floor2.png");
+		mPlayerRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mGameAtlas, mContext, "player.png", 6, 1);
+		mHandRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "hand.png");
+		mClingRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mGameAtlas, mContext, "cling.png");
+		      
+		
+		try {
+			mGameAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			mGameAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			Debug.e(e);
 		}
 		
-		// test texture:
-		if(box_region==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256);
-			box_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "square.png");
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (floor1_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-			floor1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "floor1.png");			
-	    	try {
-	    		texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-	    		texture.load();
-			} 
-	    	catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (floor2_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-			floor2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "floor2.png");
-	       try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-				texture.load();
-			} 
-			catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (player_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 384, 256, TextureOptions.BILINEAR);
-			player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "player.png", 12, 8);
-	        try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-				texture.load();
-			} 
-			catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (complete_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-			complete_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "square.png");
-	        try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-				texture.load();
-			} 
-			catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (hand_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 378, 521, TextureOptions.BILINEAR);
-			hand_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "hand2.png");
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-				texture.load();
-			} 
-			catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		
-		if (cling_region == null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 800, 800, TextureOptions.BILINEAR);
-			cling_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, context, "cling2.png");
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-				texture.load();
-			} 
-			catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
 		// Revert the Asset Path.
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
 	}
 	// ============================ UNLOAD TEXTURES (GAME) =============== //
 	private void unloadGameTextures(){
-		if (gameBackgroundTextureRegion!=null) {
-			if (gameBackgroundTextureRegion.getTexture().isLoadedToHardware()) {
-				gameBackgroundTextureRegion.getTexture().unload();
-				gameBackgroundTextureRegion = null;
-			}
-		}
-		if (box_region!=null) {
-			if (box_region.getTexture().isLoadedToHardware()) {
-				box_region.getTexture().unload();
-				box_region = null;
-			}
-		}
-		if (floor1_region!=null) {
-			if (floor1_region.getTexture().isLoadedToHardware()) {
-				floor1_region.getTexture().unload();
-				floor1_region = null;
-			}
-		}
-		if (floor2_region!=null) {
-			if (floor2_region.getTexture().isLoadedToHardware()) {
-				floor2_region.getTexture().unload();
-				floor2_region = null;
-			}
-		}
-		if (player_region!=null) {
-			if (player_region.getTexture().isLoadedToHardware()) {
-				player_region.getTexture().unload();
-				player_region = null;
-			}
-		}
-		if (complete_region!=null) { 
-			if (complete_region.getTexture().isLoadedToHardware()) {
-				complete_region.getTexture().unload();
-				complete_region = null;
-			}
-		}
-		if (hand_region!=null) { 
-			if (hand_region.getTexture().isLoadedToHardware()) {
-				hand_region.getTexture().unload();
-				hand_region = null;
-			}
-		}
-		if (cling_region!=null) { 
-			if (cling_region.getTexture().isLoadedToHardware()) {
-				cling_region.getTexture().unload();
-				cling_region = null;
-			}
+		if (mGameAtlas!=null) {
+			mGameAtlas.unload();
+			mGameAtlas = null;
+			mBackgroundRegion = null;
+			mBoxRegion = null;
+			mFloor1Region = null;
+			mFloor2Region = null;
+			mPlayerRegion = null;
+			mCompleteRegion = null;
+			mHandRegion = null;
+			mClingRegion = null;
 		}
 	}
 		
@@ -298,117 +186,69 @@ public class ResourceManager extends Object {
 		mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
 		// Set our shared assets folder to "assets/gfx/"
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		mButtonAtlas = new BuildableBitmapTextureAtlas(mEngine.getTextureManager(), 1420, 340);
 
-		// Menu button texture
-		if (menubuttonTiledTextureRegion==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 355, 85);
-			menubuttonTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "menu.png", 2, 1);
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
+		mMenuButtonRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mButtonAtlas, mContext, "menu.png", 2, 1);
+		mPauseButtonRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mButtonAtlas, mContext, "pause.png",2, 1);
+		mResumeButtonRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mButtonAtlas, mContext, "resume.png", 2, 1);
+		mRestartButtonRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mButtonAtlas, mContext, "restart.png", 2, 1);
+			
+			
+		try {
+			mButtonAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
+			mButtonAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			Debug.e(e);
 		}
-		// Pause button texture
-		if (pausebuttonTiledTextureRegion==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 355, 85);
-			pausebuttonTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "pause.png",2, 1);
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		// Resume button texture
-		if (resumebuttonTiledTextureRegion==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 355, 85);
-			resumebuttonTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "resume.png", 2, 1);
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-		// Restart button texture
-		if (restartbuttonTiledTextureRegion==null) {
-			BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 355, 85);
-			restartbuttonTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(texture, context, "restart.png", 2, 1);
-			try {
-				texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-				texture.load();
-			} catch (TextureAtlasBuilderException e) {
-				Debug.e(e);
-			}
-		}
-
+		
 		// Revert the Asset Path
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
 	}
 	// ============================ UNLOAD TEXTURES (SHARED) ============= //
 	private void unloadButtonTextures() {
-		// button texture
-		if (menubuttonTiledTextureRegion!=null) {
-			if (menubuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
-				menubuttonTiledTextureRegion.getTexture().unload();
-				menubuttonTiledTextureRegion = null;
-			}
-		}
-		if (pausebuttonTiledTextureRegion!=null) {
-			if (pausebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
-				pausebuttonTiledTextureRegion.getTexture().unload();
-				pausebuttonTiledTextureRegion = null;
-			}
-		}
-		if (restartbuttonTiledTextureRegion!=null) { 
-			if (restartbuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
-				restartbuttonTiledTextureRegion.getTexture().unload();
-				restartbuttonTiledTextureRegion = null;
-			}
-		} 
-		if (resumebuttonTiledTextureRegion!=null) {
-			if (resumebuttonTiledTextureRegion.getTexture().isLoadedToHardware()) {
-				resumebuttonTiledTextureRegion.getTexture().unload();
-				resumebuttonTiledTextureRegion = null;
-			}
+		if (mButtonAtlas!=null) {
+			mButtonAtlas.unload();
+			
+			mMenuButtonRegion = null;
+			mPauseButtonRegion = null;
+			mRestartButtonRegion = null;
+			mResumeButtonRegion = null;
 		}
 	}
 	
 	// =========================== LOAD SOUNDS ======================== //
 	private void loadSounds(){
 		SoundFactory.setAssetBasePath("sfx/");
-		if (onDieSound==null) {
+		if (mOnDieSound==null) {
 			try {
-				onDieSound	= SoundFactory.createSoundFromAsset(engine.getSoundManager(), context, "die.wav");
+				mOnDieSound	= SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), mContext, "die.ogg");
 			} catch (final IOException e) {
 				Log.v("Sounds Load","Exception:" + e.getMessage());
 			}
 		}
 	
 		MusicFactory.setAssetBasePath("sfx/");
-		if (levelId == 1) {
-			if (gameMusic==null) {
+		if (mLevelId == 1) {
+			if (mGameMusic==null) {
 				try {
-					gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "vanguard.mp3");
+					mGameMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), mContext, "vanguard.mp3");
 				} catch (final IOException e) {
 					Log.e("Music Load","Exception:" + e.getMessage());
 				}
 			}
 		} 
-		if (levelId == 2) {
-			if (gameMusic==null) {
+		if (mLevelId == 2) {
+			if (mGameMusic==null) {
 				try {
-					gameMusic = MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "monarchy.mp3");
+					mGameMusic = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), mContext, "monarchy.mp3");
 				} catch (final IOException e) {
 					Log.e("Music Load","Exception:" + e.getMessage());
 				}
 			}
 		}
-		if (onVictorySound==null) {
+		if (mOnVictorySound==null) {
 			try {
-				onVictorySound	= MusicFactory.createMusicFromAsset(engine.getMusicManager(), context, "victory.mp3");
+				mOnVictorySound	= MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), mContext, "victory.ogg");
 			} catch (final IOException e) {
 				Log.v("Sounds Load","Exception:" + e.getMessage());
 			}
@@ -417,62 +257,46 @@ public class ResourceManager extends Object {
 	// =========================== UNLOAD SOUNDS ====================== //
 	// Unload the sounds and music and make sure to stop it first
 	private void unloadSounds(){
-		if (onDieSound!=null) {
-			if (onDieSound.isLoaded()) {
-				onDieSound.stop();
-				engine.getSoundManager().remove(onDieSound);
-				onDieSound = null;
+		if (mOnDieSound!=null) {
+			if (mOnDieSound.isLoaded()) {
+				mOnDieSound.stop();
+				mEngine.getSoundManager().remove(mOnDieSound);
+				mOnDieSound = null;
 			}
 		}
-		if (onVictorySound!=null) {
-			onVictorySound.stop();
-			engine.getMusicManager().remove(onVictorySound);
-			onVictorySound = null;
+		if (mOnVictorySound!=null) {
+			mOnVictorySound.stop();
+			mEngine.getMusicManager().remove(mOnVictorySound);
+			mOnVictorySound = null;
 		}
-		if (gameMusic!=null) {
-			gameMusic.stop();
-			engine.getMusicManager().remove(gameMusic);
-			gameMusic = null;
+		if (mGameMusic!=null) {
+			mGameMusic.stop();
+			mEngine.getMusicManager().remove(mGameMusic);
+			mGameMusic = null;
 		}
 	}
 
 	// ============================ LOAD FONTS ========================== //
 	private void loadFonts(){
-		if (fontDefault32Bold==null) {
-			fontDefault32Bold = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD),  32f, true, Color.WHITE_ARGB_PACKED_INT);
-			fontDefault32Bold.load();
-		}
-		if (fontDefault72Bold==null) {
-			fontDefault72Bold = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 512, 512, Typeface.create(Typeface.DEFAULT, Typeface.BOLD),  72f, true, Color.WHITE_ARGB_PACKED_INT);
-			fontDefault72Bold.load();
-		}
 		FontFactory.setAssetBasePath("fonts/");
-		if (fontSlimJoe==null) {
-			fontSlimJoe = FontFactory.createFromAsset(engine.getFontManager(), engine.getTextureManager(), 256, 256, TextureOptions.BILINEAR, context.getAssets(), "slimjoe.otf", 32f, true, Color.WHITE_ARGB_PACKED_INT);
-			fontSlimJoe.load(); 
+		if (mFontSlimJoe==null) {
+			mFontSlimJoe = FontFactory.createFromAsset(mEngine.getFontManager(), mEngine.getTextureManager(), 256, 256, TextureOptions.BILINEAR, mContext.getAssets(), "slimjoe.otf", 32f, true, Color.WHITE_ARGB_PACKED_INT);
+			mFontSlimJoe.load(); 
 		}
-		if (fontBigJohn==null) {
-			fontBigJohn = FontFactory.createFromAsset(engine.getFontManager(), engine.getTextureManager(), 512, 512, TextureOptions.BILINEAR, context.getAssets(), "bigjohn.otf", 52f, true, Color.WHITE_ARGB_PACKED_INT);
-			fontBigJohn.load(); 
+		if (mFontBigJohn==null) {
+			mFontBigJohn = FontFactory.createFromAsset(mEngine.getFontManager(), mEngine.getTextureManager(), 512, 512, TextureOptions.BILINEAR, mContext.getAssets(), "bigjohn.otf", 52f, true, Color.WHITE_ARGB_PACKED_INT);
+			mFontBigJohn.load(); 
 		}
 	}
 	// ============================ UNLOAD FONTS ======================== //
 	private void unloadFonts(){
-		if (fontDefault32Bold!=null) {
-			fontDefault32Bold.unload();
-			fontDefault32Bold = null;
+		if (mFontSlimJoe!=null) {
+			mFontSlimJoe.unload();
+			mFontSlimJoe = null;
 		}
-		if (fontDefault72Bold!=null) {
-			fontDefault72Bold.unload();
-			fontDefault72Bold = null;
-		}
-		if (fontSlimJoe!=null) {
-			fontSlimJoe.unload();
-			fontSlimJoe = null;
-		}
-		if (fontBigJohn!=null) {
-			fontBigJohn.unload();
-			fontBigJohn = null;
+		if (mFontBigJohn!=null) {
+			mFontBigJohn.unload();
+			mFontBigJohn = null;
 		}
 	}
 }

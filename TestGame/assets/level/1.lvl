@@ -32,7 +32,6 @@
 	<entity x="2150" y="665" type="box" />
 	<entity x="2300" y="724" type="box" />
 	
-	
 	<entity x="500" y="0" width="900" height="4" type="floor2" />
 	<entity x="500" y="26" type="levelComplete" />
 	<entity x="650" y="85" type="levelComplete" />

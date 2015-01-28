@@ -46,8 +46,8 @@ public class LevelSelectorActivity extends Activity {
 			imgLevel2.setImageResource(R.drawable.level2_completed);
 		}
 		
+		// Start GameActivity and pass level
 		OnClickListener test = new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				int id = mViewFlipper.getDisplayedChild() + 1;
@@ -56,7 +56,6 @@ public class LevelSelectorActivity extends Activity {
 	        	startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 				finish();
-				
 			}
 		};
 		imgLevel1.setOnClickListener(test);

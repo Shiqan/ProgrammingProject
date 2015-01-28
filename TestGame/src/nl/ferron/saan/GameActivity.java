@@ -72,7 +72,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// ====================================================
 	// SCREEN RESOLUTION
 	// ====================================================
-
 	// The resolution of the screen with which you are developing
 	static float DESIGN_SCREEN_WIDTH_PIXELS = 800f;
 	static float DESIGN_SCREEN_HEIGHT_PIXELS = 480f;
@@ -190,9 +189,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API).addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
-        
-        
+                .build();        
 	}
 
 
@@ -209,8 +206,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		// Create scene
 		mGameScene = new Scene();
 		mGameScene.setOnSceneTouchListener(this);
+		ResourceManager.getInstance();
 		//this.mGameScene.setBackground(new Background(0.09804f, 0.6274f, 0.8784f));
-		mGameScene.setBackground(new SpriteBackground(new Sprite(mCameraWidth/2,mCameraHeight/2,mCameraWidth, mCameraHeight, ResourceManager.gameBackgroundTextureRegion, ResourceManager.getInstance().engine.getVertexBufferObjectManager())));
+		mGameScene.setBackground(new SpriteBackground(new Sprite(mCameraWidth/2,mCameraHeight/2,mCameraWidth, mCameraHeight, ResourceManager.mBackgroundRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager())));
 		
 		// Create HUD, PhysicsWorld and load the level
 		createHUD();
@@ -221,14 +219,14 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		mCamera.setHUD(mGameHud);
 		
 		// Scale the scene and the HUD to the device size
-		mGameScene.setScale(ResourceManager.getInstance().cameraScaleFactorX, ResourceManager.getInstance().cameraScaleFactorY);
-		mGameScene.setPosition(0, ResourceManager.getInstance().cameraHeight/2f);
+		mGameScene.setScale(ResourceManager.getInstance().mCameraScaleFactorX, ResourceManager.getInstance().mCameraScaleFactorY);
+		mGameScene.setPosition(0, ResourceManager.getInstance().mCameraHeight/2f);
 		mGameHud.setScaleCenter(0f, 0f);
-		mGameHud.setScale(ResourceManager.getInstance().cameraScaleFactorX,ResourceManager.getInstance().cameraScaleFactorY);
+		mGameHud.setScale(ResourceManager.getInstance().mCameraScaleFactorX,ResourceManager.getInstance().mCameraScaleFactorY);
 		
 		// Start the game automatically
 		if (!UserDataManager.getInstance().isSoundMuted()) {
-			ResourceManager.gameMusic.play();
+			ResourceManager.mGameMusic.play();
 		}
 		mPlayer.start();
 		
@@ -244,13 +242,15 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	@Override
 	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-			if(ResourceManager.getInstance().engine!=null) {
-				if(mCamera.getHUD().equals(layer) &!mPlayer.isIgnoreUpdate()) {
+			if(ResourceManager.getInstance().mEngine!=null) {
+				// If game is paused resume
+				if (mCamera.getHUD().equals(layer) &!mPlayer.isIgnoreUpdate()) {
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);
 					if (!UserDataManager.getInstance().isSoundMuted()) {
-						ResourceManager.gameMusic.play();
+						ResourceManager.mGameMusic.play();
 					}
+				// else unload the resources and go back to main screen
 				} else {
 					mGameScene.setIgnoreUpdate(true);
 					ResourceManager.unloadGameResources();
@@ -270,8 +270,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	 */
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-		if (pSceneTouchEvent.isActionDown()) {
-            Log.i("TOUCH EVENT", "TOUCHED" + mPlayer.getX());        
+		if (pSceneTouchEvent.isActionDown()) {     
             mContinuousTouch = true;
 			mPlayer.jump();
         } else if (pSceneTouchEvent.isActionUp()) {
@@ -286,17 +285,17 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private void createHUD() {	
 		// Create Pause button
 		ButtonSprite pPauseButton = new ButtonSprite(0f,0f, 
-				ResourceManager.pausebuttonTiledTextureRegion.getTextureRegion(0), 
-				ResourceManager.pausebuttonTiledTextureRegion.getTextureRegion(1), 
-				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+				ResourceManager.mPauseButtonRegion.getTextureRegion(0), 
+				ResourceManager.mPauseButtonRegion.getTextureRegion(1), 
+				ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pPauseButton.setPosition(DESIGN_SCREEN_WIDTH_PIXELS-((pPauseButton.getWidth()*pPauseButton.getScaleX())/2f), DESIGN_SCREEN_HEIGHT_PIXELS-(pPauseButton.getHeight()*pPauseButton.getScaleY())/2f);
 		pPauseButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				// Play the click sound and show the Layer
+				// Pause music and show the Layer
 				if (!UserDataManager.getInstance().isSoundMuted()) {
-					ResourceManager.gameMusic.pause();
+					ResourceManager.mGameMusic.pause();
 				}
 				showLayer(0);
 		}});		
@@ -318,7 +317,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	 * @param levelID name of lvl file
 	 */
 	private void loadLevel(int levelID) {
-		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		
 		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
 		
@@ -344,10 +343,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				Sprite plevelObject;
 				
 				if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_BOX)) {
-					boolean alpha = SAXUtils.getBooleanAttribute(pAttributes, TAG_ENTITY_ATTRIBUTE_TYPE_ALPHA_BOX, false);
-					plevelObject = new Sprite(x, y, ResourceManager.box_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-					plevelObject.setScale(0.2f);
+					plevelObject = new Sprite(x, y, ResourceManager.mBoxRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 					
+					boolean alpha = SAXUtils.getBooleanAttribute(pAttributes, TAG_ENTITY_ATTRIBUTE_TYPE_ALPHA_BOX, false);
 					if (alpha) {
 						plevelObject.registerEntityModifier(new LoopEntityModifier(new AlphaModifier(2f, 1.0f, 0.0f)));
 					}
@@ -364,8 +362,8 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 								mCamera.setChaseEntity(null);
 								
 								if (!UserDataManager.getInstance().isSoundMuted()) {
-									ResourceManager.gameMusic.pause();	
-									ResourceManager.onDieSound.play();
+									ResourceManager.mGameMusic.pause();	
+									ResourceManager.mOnDieSound.play();
 								}
 								
 								explode((int) mPlayer.getX(), (int) mPlayer.getY());
@@ -383,7 +381,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 									
-					plevelObject = new Sprite(x+width/2, y, ResourceManager.floor1_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject = new Sprite(x+width/2, y, ResourceManager.mFloor1Region, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 					plevelObject.setWidth(width);
 					plevelObject.setHeight(height);
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
@@ -394,7 +392,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					int width = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_WIDTH);
 					int height = SAXUtils.getIntAttributeOrThrow(pAttributes, LevelConstants.TAG_LEVEL_ATTRIBUTE_HEIGHT);
 					
-					plevelObject = new Sprite(x+width/2, y, ResourceManager.floor2_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject = new Sprite(x+width/2, y, ResourceManager.mFloor2Region, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 					plevelObject.setWidth(width);
 					plevelObject.setHeight(height);
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
@@ -402,21 +400,18 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
 				
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HAND)) {
-					plevelObject = new Sprite(x, y, ResourceManager.hand_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-					plevelObject.setScale(0.5f);
-					
-					Text pTutorialText = new Text(0,0,ResourceManager.fontSlimJoe,"TOUCH TO JUMP",ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					plevelObject = new Sprite(x, y, ResourceManager.mHandRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
+										
+					Text pTutorialText = new Text(0,0,ResourceManager.mFontSlimJoe,"TOUCH TO JUMP",ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 					pTutorialText.setPosition(x-(pTutorialText.getWidth()/4),mCamera.getHeight()/3);
 					mGameScene.attachChild(pTutorialText);
 											
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_CLING)) {
-					plevelObject = new Sprite(x, y, ResourceManager.cling_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-					plevelObject.setScale(0.2f);	
+					plevelObject = new Sprite(x, y, ResourceManager.mClingRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 					plevelObject.registerEntityModifier(new LoopEntityModifier(new ScaleModifier(1f, 0.1f, 0.3f)));
 					
 				} else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE)) {
-					plevelObject = new Sprite(x, y, ResourceManager.complete_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-					plevelObject.setScale(0.2f);				
+					plevelObject = new Sprite(x, y, ResourceManager.mCompleteRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());			
 					Body body = PhysicsFactory.createBoxBody(mPhysicsWorld, plevelObject, BodyType.StaticBody, FIXTURE_DEF);
 					body.setUserData("levelComplete");
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(plevelObject, body, false, false));
@@ -429,6 +424,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					throw new IllegalArgumentException();
 				}
 
+				// Disable off screen rendering
 				plevelObject.setCullingEnabled(true);
 
 				return plevelObject;
@@ -451,12 +447,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null) {
 					if (x1.getBody().getUserData().equals("player") || x2.getBody().getUserData().equals("player")) {
 						mPlayer.setfloorContact();
-					}
-					
-					// FLOOR 1
-					if ((x1.getBody().getUserData().equals("floor1") && x2.getBody().getUserData().equals("player")) 
-							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("floor1"))) {
-						//Log.i("TOUCHED", "floor1");
 					}
 					
 					// FLOOR 2
@@ -486,9 +476,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 					if ((x1.getBody().getUserData().equals("levelComplete") && x2.getBody().getUserData().equals("player")) 
 							|| (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("levelComplete"))) {
 						
-						if (ResourceManager.onVictorySound != null &!ResourceManager.onVictorySound.isPlaying() &!UserDataManager.getInstance().isSoundMuted()) {
-							ResourceManager.gameMusic.pause();
-							ResourceManager.onVictorySound.play();
+						if (ResourceManager.mOnVictorySound != null &!ResourceManager.mOnVictorySound.isPlaying() &!UserDataManager.getInstance().isSoundMuted()) {
+							ResourceManager.mGameMusic.pause();
+							ResourceManager.mOnVictorySound.play();
 						}
 						
 						if (mPlayer.getAlpha() > 0.1f) {
@@ -557,7 +547,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		int maxParticleCount = 75;
 		
 		// Create Particle system
-		BatchedSpriteParticleSystem particleSystem = new BatchedSpriteParticleSystem(particleEmitter, minSpawnRate, maxSpawnRate, maxParticleCount, ResourceManager.getInstance().player_region, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		BatchedSpriteParticleSystem particleSystem = new BatchedSpriteParticleSystem(particleEmitter, minSpawnRate, maxSpawnRate, maxParticleCount, ResourceManager.getInstance().mPlayerRegion, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		
 		// Add particle modifiers
 		particleSystem.addParticleInitializer(new AccelerationParticleInitializer<UncoloredSprite>(-500f, 500f, -500f, 500f));
@@ -596,7 +586,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	 */
 	private void showLayer(int pLayerType) {
 		if (!UserDataManager.getInstance().isSoundMuted()) {
-			ResourceManager.gameMusic.pause();
+			ResourceManager.mGameMusic.pause();
 		}
 		
 		String pLayerTitleString = null;
@@ -614,7 +604,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		    // Game over (pause after 5 seconds)
 		    case 1:
 		    	pLayerTitleString = "GAME OVER!";
-		    	ResourceManager.getInstance().engine.registerUpdateHandler(new TimerHandler(5f, new ITimerCallback() 	{									
+		    	ResourceManager.getInstance().mEngine.registerUpdateHandler(new TimerHandler(5f, new ITimerCallback() 	{									
 				    public void onTimePassed(final TimerHandler pTimerHandler) {
 				    	mGameScene.setIgnoreUpdate(true);
 				    }
@@ -624,7 +614,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		    // Game completed (pause after 2 seconds)
 		    case 2:
 		    	pLayerTitleString = "COMPLETED!";
-		    	ResourceManager.getInstance().engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 	{									
+		    	ResourceManager.getInstance().mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 	{									
 				    public void onTimePassed(final TimerHandler pTimerHandler) {
 				    	mGameScene.setIgnoreUpdate(true);
 				    }
@@ -633,17 +623,17 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	    }	
 			
 		// Create a transparent background		
-		Rectangle pBackground = new Rectangle(mCameraWidth/2,mCameraHeight/2,mCameraWidth,mCameraHeight,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		Rectangle pBackground = new Rectangle(mCameraWidth/2,mCameraHeight/2,mCameraWidth,mCameraHeight,ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pBackground.setColor(0f, 0f, 0f, 0.55f);
 		layer.attachChild(pBackground);
 		
 		// Create the title text for the Layer
-		Text pLayerTitle = new Text(0,0,ResourceManager.fontBigJohn, pLayerTitleString, ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		Text pLayerTitle = new Text(0,0,ResourceManager.mFontBigJohn, pLayerTitleString, ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pLayerTitle.setPosition((pBackground.getWidth()/2f),(pBackground.getHeight()-pLayerTitle.getHeight()));
 		layer.attachChild(pLayerTitle);
 		
 		// Create the score text for the Layer
-		Text pScoreText = new Text(0,0,ResourceManager.fontSlimJoe, calculateScore((int) mPlayer.getX()) ,ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		Text pScoreText = new Text(0,0,ResourceManager.mFontSlimJoe, calculateScore((int) mPlayer.getX()) ,ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pScoreText.setPosition((((pBackground.getWidth()+pScoreText.getWidth())/2f)/3f),((pBackground.getHeight()+pScoreText.getHeight())/2f));
 		layer.attachChild(pScoreText);
 		
@@ -651,9 +641,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		ButtonSprite pMainMenuButton = new ButtonSprite(
 				0,
 				0, 
-				ResourceManager.menubuttonTiledTextureRegion.getTextureRegion(0), 
-				ResourceManager.menubuttonTiledTextureRegion.getTextureRegion(1), 
-				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+				ResourceManager.mMenuButtonRegion.getTextureRegion(0), 
+				ResourceManager.mMenuButtonRegion.getTextureRegion(1), 
+				ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pMainMenuButton.setPosition(
 				2f*((pBackground.getWidth()+pMainMenuButton.getWidth())/3f),
 				((pBackground.getHeight()+pMainMenuButton.getHeight())/2f));
@@ -661,7 +651,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			@Override
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				// Play the click sound and show the Main Menu.
+				// Unload the resources and go back to main screen
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(GameActivity.this, MainActivity.class);
 			    startActivity(intent);
@@ -675,9 +665,9 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		ButtonSprite pRestartButton = new ButtonSprite(
 				0,
 				0, 
-				ResourceManager.restartbuttonTiledTextureRegion.getTextureRegion(0), 
-				ResourceManager.restartbuttonTiledTextureRegion.getTextureRegion(1), 
-				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+				ResourceManager.mRestartButtonRegion.getTextureRegion(0), 
+				ResourceManager.mRestartButtonRegion.getTextureRegion(1), 
+				ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 		pRestartButton.setPosition(
 				2f*((pBackground.getWidth()+pRestartButton.getWidth())/3f),
 				((pBackground.getHeight()+pRestartButton.getHeight())/2f)-pRestartButton.getHeight());
@@ -685,7 +675,7 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			@Override
 			public void onClick(ButtonSprite pButtonSprite,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				// Play the click sound and show the Main Menu.
+				// Unload the resources and restart the Activity with same level
 				ResourceManager.unloadGameResources();
 				Intent intent = new Intent(GameActivity.this, GameActivity.class);
 				intent.putExtra("level", mId);
@@ -699,24 +689,23 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		// Create a resume button
 		if (pCreateResumeButton) {
 			ButtonSprite pResumeButton = new ButtonSprite(
-					2f*((pBackground.getWidth()+pScoreText.getWidth())/3f),
-					((pBackground.getHeight()+pScoreText.getHeight())/2f), 
-					ResourceManager.resumebuttonTiledTextureRegion.getTextureRegion(0), 
-					ResourceManager.resumebuttonTiledTextureRegion.getTextureRegion(1), 
-					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+					0,
+					0, 
+					ResourceManager.mResumeButtonRegion.getTextureRegion(0), 
+					ResourceManager.mResumeButtonRegion.getTextureRegion(1), 
+					ResourceManager.getInstance().mEngine.getVertexBufferObjectManager());
 			pResumeButton.setPosition(
 					2f*((pBackground.getWidth()+pResumeButton.getWidth())/3f),
 					((pBackground.getHeight()+pResumeButton.getHeight())/2f)-2f*pResumeButton.getHeight());
-			
 			pResumeButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(ButtonSprite pButtonSprite,
 						float pTouchAreaLocalX, float pTouchAreaLocalY) {
-					// Reset HUD and resume
+					// Reset HUD and resume sound and scene
 					mCamera.setHUD(mGameHud);
 					mGameScene.setIgnoreUpdate(false);
 					if (!UserDataManager.getInstance().isSoundMuted()) {
-						ResourceManager.gameMusic.play();
+						ResourceManager.mGameMusic.play();
 					}
 				}});
 			layer.attachChild(pResumeButton);
@@ -741,14 +730,17 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	@Override
 	public void onPauseGame() {
-		// If music is playing, pause the music and the game
-		if (ResourceManager.gameMusic != null && ResourceManager.gameMusic.isPlaying()) {
-			ResourceManager.gameMusic.pause();
+		// If music is playing, pause the music
+		if (ResourceManager.mGameMusic != null && ResourceManager.mGameMusic.isPlaying()) {
+			ResourceManager.mGameMusic.pause();
 		}
+		
+		// Pause the game by calling pause layer
 		if (mCamera.getHUD() != layer &! mGameScene.isIgnoreUpdate()) {
 			showLayer(0);
 		}
 		
+		// Disconnect from Google
         if (mGoogleApiClient.isConnected()) {
         	Log.d(TAG, "onPauseGame(): disconnecting");
             mGoogleApiClient.disconnect();
@@ -775,7 +767,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
      * @param score the percentage of the level that is cleared
      */
 	private void pushAccomplishments(Context c, int score) {
-    	Log.i(TAG, "checkForAchievements");
         if (isSignedIn()) {
         	// Check for achievements
         	
@@ -845,7 +836,6 @@ public class GameActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             Log.d(TAG, "onConnectionFailed(): already resolving");
             return;
         }
-
         mResolvingConnectionFailure = true;
         if (!BaseGameUtils.resolveConnectionFailure(this, mGoogleApiClient, connectionResult,
                 RC_SIGN_IN, getString(R.string.signin_other_error))) {

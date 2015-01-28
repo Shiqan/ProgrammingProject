@@ -32,6 +32,9 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 
 public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 	
+    private TextView mTxtPlayer;
+    private MediaPlayer mMediaPlayer;
+	
 	// Client used to interact with Google APIs
     private static GoogleApiClient mGoogleApiClient;
 
@@ -41,6 +44,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     // Has the user clicked the sign-in button?
     public static boolean mSignInClicked = false;
     public static boolean mSignOutClicked = false;
+    public static boolean mSignInFailed = false;
 
     // Automatically start the sign-in flow when the Activity starts
     private boolean mAutoStartSignInFlow = true;
@@ -50,10 +54,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
     
-    private static String TAG = "TESTGAME";
-    private TextView mTxtPlayer;
-    public static boolean mSignInFailed = false;
-    private MediaPlayer mMediaPlayer;
+    private static String TAG = "MainActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +160,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 					mMediaPlayer.release();
 				} else {
 					btnSound.setBackgroundResource(R.drawable.btn_sound_on);
-					mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.menu2);
+					mMediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.menu);
 		    		mMediaPlayer.setLooping(true);
 		    		mMediaPlayer.start();
 				}
@@ -341,7 +342,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
         
         if (!UserDataManager.getInstance().isSoundMuted()) {
-        	mMediaPlayer = MediaPlayer.create(this, R.raw.menu2);
+        	mMediaPlayer = MediaPlayer.create(this, R.raw.menu);
     		mMediaPlayer.setLooping(true);
     		mMediaPlayer.start();
 		}
