@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level width="37000" height="1000">	
+	<entity x="20" y="1" type="player" />
+	<entity x="0" y="0" width="36200" height="2" type="floor1" />
+	
+	<!--	
+		box baseline y="26" 
+			
+		staircase up x += 150 y += 59 
+		staircase jumpdown x += 250 y -= 59 			
+		staircase falldown x += 150 y -= 59
+	-->
+	<!--
+	<entity x="1000" y="26" type="box" alpha="true" />
+	<entity x="1150" y="85" type="box" alpha="true" />
+	
+	<entity x="1300" y="195" type="box" alpha="true" />
+	
+	
+	<entity x="500" y="0" width="900" height="4" type="floor2" />
+	<entity x="500" y="26" type="box" />
+	<entity x="650" y="85" type="box" />
+	<entity x="800" y="144" type="box" />
+	<entity x="950" y="203" type="box" />
+	<entity x="1100" y="262" type="box" />
+	<entity x="1250" y="321" type="box" />
+	<entity x="1400" y="380" type="box" />
+	<entity x="1550" y="439" type="box" />
+	<entity x="1700" y="498" type="box" />
+	<entity x="1850" y="557" type="box" />
+	<entity x="2000" y="606" type="box" />
+	<entity x="2150" y="665" type="box" />
+	<entity x="2300" y="724" type="box" />
+	
+	<entity x="500" y="0" width="900" height="4" type="floor2" />
+	<entity x="500" y="26" type="levelComplete" />
+	<entity x="650" y="85" type="levelComplete" />
+	<entity x="800" y="144" type="levelComplete" />
+	<entity x="950" y="203" type="levelComplete" />
+	<entity x="1100" y="262" type="levelComplete" />
+	<entity x="1250" y="321" type="levelComplete" />
+	<entity x="1400" y="380" type="levelComplete" />
+	<entity x="1550" y="439" type="levelComplete" />
+	<entity x="1700" y="498" type="levelComplete" />
+	-->
+	
+	<entity x="1030" y="-100" type="hand" />	
+	<entity x="950" y="26" type="cling" />	
+	
+	<entity x="1100" y="0" width="400" height="4" type="floor2" />
+	<entity x="1100" y="26" type="box" />	
+	<entity x="1300" y="26" type="box" />
+	<entity x="1500" y="26" type="box" />
+	
+	<entity x="1900" y="0" width="400" height="4" type="floor2" />
+	<entity x="1900" y="26" type="box" />	
+	<entity x="2100" y="26" type="box" />
+	<entity x="2300" y="26" type="box" />
+	
+	<entity x="2850" y="0" width="400" height="4" type="floor2" />
+	<entity x="2850" y="26" type="box" />	
+	<entity x="3000" y="85" type="box" />
+	<entity x="3250" y="26" type="box" />
+	
+	<entity x="3650" y="0" width="400" height="4" type="floor2" />
+	<entity x="3650" y="26" type="box" />	
+	<entity x="3850" y="26" type="box" />
+	<entity x="4000" y="85" type="box" />
+	
+	<entity x="4500" y="0" width="400" height="4" type="floor2" />
+	<entity x="4500" y="26" type="box" />	
+	<entity x="4650" y="85" type="box" />
+	<entity x="4900" y="26" type="box" />
+	
+	<entity x="5450" y="0" width="1250" height="4" type="floor2" />
+	<entity x="5450" y="26" type="box" />	
+	<entity x="5600" y="85" type="box" />
+	<entity x="5750" y="144" type="box" />
+	<entity x="5900" y="85" type="box" />	
+	<entity x="6100" y="85" type="box" />
+	<entity x="6300" y="85" type="box" />
+	<entity x="6550" y="26" type="box" />
+	<entity x="6700" y="85" type="box" />
+		
+	<entity x="7100" y="0" width="2150" height="4" type="floor2" />
+	<entity x="7100" y="26" type="box" />
+	<entity x="7250" y="85" type="box" />
+	<entity x="7400" y="144" type="box" />
+	<entity x="7550" y="203" type="box" />
+	<entity x="7700" y="262" type="box" />
+	<entity x="7850" y="321" type="box" />
+	<entity x="8000" y="262" type="box" />
+	<entity x="8150" y="321" type="box" />
+	<entity x="8300" y="203" type="box" />
+	<entity x="8450" y="144" type="box" />
+	<entity x="8650" y="144" type="box" />
+	<entity x="8800" y="85" type="box" />
+	<entity x="9050" y="26" type="box" />
+	<entity x="9250" y="26" type="box" />
+	
+	<entity x="9600" y="26" type="box" />
+	
+	<entity x="9800" y="0" width="400" height="4" type="floor2" />
+	<entity x="9800" y="26" type="box" />
+	<entity x="9950" y="85" type="box" />
+	<entity x="10200" y="26" type="box" />
+		
+	<entity x="11000" y="0" width="4600" height="4" type="floor2" />
+	<entity x="11000" y="26" type="box" />
+	<entity x="11150" y="85" type="box" />
+	<entity x="11300" y="144" type="box" />
+	<entity x="11450" y="203" type="box" />
+	<entity x="11600" y="262" type="box" />
+	<entity x="11750" y="321" type="box" />
+	<entity x="11900" y="262" type="box" />
+	<entity x="12050" y="203" type="box" />
+	<entity x="12200" y="144" type="box" />
+	<entity x="12350" y="85" type="box" />
+	<entity x="12500" y="26" type="box" />
+	<entity x="12650" y="85" type="box" />
+	<entity x="12800" y="144" type="box" />
+	<entity x="12950" y="203" type="box" />
+	<entity x="13100" y="262" type="box" />
+	<entity x="13250" y="321" type="box" />
+	<entity x="13250" y="203" type="box" />
+	<entity x="13400" y="380" type="box" />
+	<entity x="13400" y="144" type="box" />
+	<entity x="13550" y="321" type="box" />
+	<entity x="13700" y="262" type="box" />
+	<entity x="13850" y="203" type="box" />
+	<entity x="14000" y="144" type="box" />
+	<entity x="14200" y="144" type="box" />
+	<entity x="14450" y="85" type="box" />
+	<entity x="14600" y="26" type="box" />
+	<entity x="14800" y="26" type="box" />
+	<entity x="14950" y="85" type="box" />
+	<entity x="15150" y="85" type="box" />
+	<entity x="15300" y="26" type="box" />
+	<entity x="15450" y="85" type="box" />
+	<entity x="15600" y="26" type="box" />
+	
+	<entity x="16000" y="0" width="1500" height="4" type="floor2" />
+	<entity x="16000" y="26" type="box" />
+	<entity x="16150" y="85" type="box" />
+	<entity x="16300" y="144" type="box" />
+	<entity x="16450" y="203" type="box" />
+	<entity x="16600" y="262" type="box" />
+	<entity x="16750" y="203" type="box" />
+	<entity x="16900" y="262" type="box" />
+	<entity x="17050" y="321" type="box" />
+	<entity x="17200" y="380" type="box" />
+	<entity x="17400" y="450" type="box" />
+	<entity x="17500" y="26" type="box" alpha="true"/>
+	
+	<entity x="17700" y="0" width="1900" height="4" type="floor2" />
+	<entity x="17700" y="26" type="box" alpha="true" />
+	<entity x="17850" y="85" type="box" alpha="true" />
+	<entity x="18000" y="26" type="box" alpha="true" />
+	<entity x="18150" y="86" type="box" alpha="true" />
+	<entity x="18300" y="144" type="box" alpha="true" />
+	<entity x="18450" y="85" type="box" alpha="true" />
+	<entity x="18600" y="144" type="box" alpha="true" />
+	<entity x="18750" y="85" type="box" alpha="true" />
+	<entity x="18900" y="144" type="box" alpha="true" />
+	<entity x="19150" y="85" type="box" alpha="true" />
+	<entity x="19300" y="144" type="box" alpha="true" />
+	<entity x="19450" y="85" type="box" alpha="true" /> 
+	<entity x="19600" y="26" type="box" alpha="true"/>
+
+	<entity x="20000" y="0" width="150" height="4" type="floor2" />
+	<entity x="20000" y="26" type="box" alpha="true" />
+	<entity x="20150" y="85" type="box" alpha="true" />
+	
+	<entity x="20300" y="195" type="box" alpha="true" />
+	
+	<entity x="20450" y="0" width="4500" height="4" type="floor2" />
+	<entity x="20450" y="26" type="box" alpha="true" />
+	<entity x="20600" y="85" type="box" alpha="true" />
+	<entity x="20750" y="144" type="box" alpha="true" />
+	<entity x="20900" y="85" type="box" alpha="true" />
+	<entity x="21050" y="144" type="box" alpha="true" />
+	<entity x="21300" y="85" type="box" alpha="true" />
+	<entity x="21450" y="26" type="box" alpha="true" />
+	<entity x="21600" y="85" type="box" alpha="true" />
+	<entity x="21750" y="144" type="box" alpha="true" />
+	<entity x="21900" y="85" type="box" alpha="true" />
+	<entity x="22100" y="85" type="box" alpha="true" />
+	<entity x="22250" y="26" type="box" alpha="true" />
+	<entity x="22400" y="85" type="box" alpha="true" />
+	<entity x="22550" y="144" type="box" alpha="true" />
+	<entity x="22700" y="203" type="box" alpha="true" />
+	<entity x="22850" y="144" type="box" alpha="true" />
+	<entity x="23050" y="144" type="box" alpha="true" />
+	<entity x="23200" y="85" type="box" alpha="true" />
+	<entity x="23350" y="144" type="box" alpha="true" />
+	<entity x="23500" y="203" type="box" alpha="true" />
+	<entity x="23650" y="144" type="box" alpha="true" />
+	<entity x="23800" y="85" type="box" alpha="true" />
+	<entity x="23950" y="144" type="box" alpha="true" />
+	<entity x="24100" y="203" type="box" alpha="true" />
+	<entity x="24250" y="262" type="box" alpha="true" />
+	<entity x="24450" y="262" type="box" alpha="true" />
+	<entity x="24600" y="203" type="box" alpha="true" />
+	<entity x="24750" y="144" type="box" alpha="true" />
+	<entity x="24950" y="26" type="box" alpha="true" />
+	
+	<entity x="26500" y="0" width="3100" height="4" type="floor2" />
+	<entity x="26500" y="26" type="box" />
+	<entity x="26650" y="85" type="box" />
+	<entity x="26800" y="144" type="box" />
+	<entity x="26950" y="203" type="box" />
+	<entity x="27100" y="262" type="box" />
+	<entity x="27250" y="321" type="box" />
+	<entity x="27400" y="262" type="box" />
+	<entity x="27600" y="262" type="box" />
+	<entity x="27750" y="203" type="box" />
+	<entity x="28000" y="144" type="box" />
+	<entity x="28150" y="203" type="box" />
+	<entity x="28300" y="262" type="box" />
+	<entity x="28450" y="203" type="box" />
+	<entity x="28600" y="144" type="box" />
+	<entity x="28800" y="144" type="box" />
+	<entity x="28950" y="85" type="box" />
+	<entity x="29100" y="26" type="box" />
+	<entity x="29300" y="26" type="box" />
+	<entity x="29450" y="85" type="box" />
+	<entity x="29650" y="144" type="box" />
+	<entity x="29600" y="26" type="box" />
+	
+	<entity x="30000" y="26" type="box" />
+	<entity x="30100" y="150" type="box" />
+	<entity x="30200" y="26" type="box" />
+	<entity x="30300" y="150" type="box" />
+	<entity x="30400" y="26" type="box" />
+	
+	<entity x="30700" y="0" width="1000" height="4" type="floor2" />
+	<entity x="30700" y="26" type="box" />
+	<entity x="30850" y="85" type="box" />
+	<entity x="31000" y="26" type="box" />
+	<entity x="31200" y="26" type="box" />
+	<entity x="31350" y="85" type="box" />
+	<entity x="31550" y="85" type="box" />
+	<entity x="31700" y="26" type="box" />
+	
+	<entity x="32000" y="0" width="1350" height="4" type="floor2" />
+	<entity x="32000" y="26" type="box" />
+	<entity x="32150" y="85" type="box" />
+	<entity x="32300" y="144" type="box" />
+	<entity x="32450" y="203" type="box" />
+	<entity x="32600" y="262" type="box" />
+	<entity x="32750" y="321" type="box" />
+	<entity x="32900" y="380" type="box" />
+	<entity x="33050" y="321" type="box" />
+	<entity x="33250" y="203" type="box" />
+	<entity x="33510" y="203" type="box" />
+	
+	<entity x="35000" y="0" width="900" height="4" type="floor2" />
+	<entity x="35000" y="26" type="levelComplete" />
+	<entity x="35150" y="85" type="levelComplete" />
+	<entity x="35300" y="144" type="levelComplete" />
+	<entity x="35450" y="203" type="levelComplete" />
+	<entity x="35600" y="262" type="levelComplete" />
+	<entity x="35750" y="321" type="levelComplete" />
+	<entity x="35900" y="380" type="levelComplete" />
+	<entity x="36050" y="439" type="levelComplete" />
+	<entity x="36200" y="498" type="levelComplete" />
+	<entity x="36350" y="557" type="levelComplete" />
+	
+</level>
